@@ -57,3 +57,11 @@ fabric.properties
 
 # Python
 .pyc
+*/*.pyc
+*/__pycache__
+
+# C/C++
+.o
+*/*.o
+.so
+*/*.so
