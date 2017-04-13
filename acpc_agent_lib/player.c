@@ -9,30 +9,31 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <getopt.h>
-#include "../acpc_infrastructure/game.h"
 #include "../acpc_infrastructure/rng.h"
+
+// TODO delete this import
 #include "../acpc_infrastructure/net.h"
 
 #include "player.h"
 
-int playGame(char const * gameFilePath, char * dealerHostname, char const * dealerPort) {
+int playGameInternal(char const * gameFilePath, char * dealerHostname, char const * dealerPort,
+                     Game *game, MatchState * state) {
   int sock, len, r, a;
   int32_t min, max;
   uint16_t port;
   double p;
-  Game *game;
-  MatchState state;
   Action action;
   FILE *file, *toServer, *fromServer;
-  struct timeval tv;
-  double probs[ NUM_ACTION_TYPES ];
-  double actionProbs[ NUM_ACTION_TYPES ];
-  rng_state_t rng;
   char line[ MAX_LINE_LEN ];
 
   /* we make some assumptions about the actions - check them here */
   assert( NUM_ACTION_TYPES == 3 );
 
+  // TODO delete -------------
+  struct timeval tv;
+  double probs[ NUM_ACTION_TYPES ];
+  double actionProbs[ NUM_ACTION_TYPES ];
+  rng_state_t rng;
   /* Define the probabilities of actions for the player */
   probs[ a_fold ] = 0.06;
   probs[ a_call ] = ( 1.0 - probs[ a_fold ] ) * 0.5;
@@ -41,6 +42,7 @@ int playGame(char const * gameFilePath, char * dealerHostname, char const * deal
   /* Initialize the player's random number state using time */
   gettimeofday( &tv, NULL );
   init_genrand( &rng, tv.tv_usec );
+  // TODO delete end -------------
 
   /* get the game */
   file = fopen( gameFilePath, "r" );
@@ -93,20 +95,20 @@ int playGame(char const * gameFilePath, char * dealerHostname, char const * deal
       continue;
     }
 
-    len = readMatchState( line, game, &state );
+    len = readMatchState( line, game, state );
     if( len < 0 ) {
 
       fprintf( stderr, "ERROR: could not read state %s", line );
       exit( EXIT_FAILURE );
     }
 
-    if( stateFinished( &state.state ) ) {
+    if( stateFinished( &(state->state) ) ) {
       /* ignore the game over message */
 
       continue;
     }
 
-    if( currentPlayer( game, &state.state ) != state.viewingPlayer ) {
+    if( currentPlayer( game, &(state->state) ) != state->viewingPlayer ) {
       /* we're not acting */
 
       continue;
@@ -116,6 +118,7 @@ int playGame(char const * gameFilePath, char * dealerHostname, char const * deal
     line[ len ] = ':';
     ++len;
 
+    // TODO game playing code starts ------------------
     /* build the set of valid actions */
     p = 0;
     for( a = 0; a < NUM_ACTION_TYPES; ++a ) {
@@ -126,7 +129,7 @@ int playGame(char const * gameFilePath, char * dealerHostname, char const * deal
     /* consider fold */
     action.type = a_fold;
     action.size = 0;
-    if( isValidAction( game, &state.state, 0, &action ) ) {
+    if( isValidAction( game, &(state->state), 0, &action ) ) {
 
       actionProbs[ a_fold ] = probs[ a_fold ];
       p += probs[ a_fold ];
@@ -139,7 +142,7 @@ int playGame(char const * gameFilePath, char * dealerHostname, char const * deal
     p += probs[ a_call ];
 
     /* consider raise */
-    if( raiseIsValid( game, &state.state, &min, &max ) ) {
+    if( raiseIsValid( game, &(state->state), &min, &max ) ) {
 
       actionProbs[ a_raise ] = probs[ a_raise ];
       p += probs[ a_raise ];
@@ -169,7 +172,7 @@ int playGame(char const * gameFilePath, char * dealerHostname, char const * deal
     }
 
     /* do the action! */
-    assert( isValidAction( game, &state.state, 0, &action ) );
+    assert( isValidAction( game, &(state->state), 0, &action ) );
     r = printAction( game, &action, MAX_LINE_LEN - len - 2,
 		     &line[ len ] );
     if( r < 0 ) {
