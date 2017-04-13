@@ -19,7 +19,10 @@ public:
   typedef std::size_t size_type;
 
   /// @brief Empty constructor.
-  array_proxy();
+  array_proxy()
+    : ptr_(0),
+      length_(0)
+  {}
 
   /// @brief Construct with iterators.
   template <typename Iterator>
