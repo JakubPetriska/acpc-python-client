@@ -15,7 +15,11 @@
 
 #include "player.h"
 
-int playGame(char const * gameFilePath, char * dealerHostname, char const * dealerPort) {
+int playGame(char const *gameFilePath, char *dealerHostname,
+             char const *dealerPort,
+             void (*on_game_start_func)(Game *),
+             void (*on_next_round_func)())
+{
   int sock, len, r, a;
   int32_t min, max;
   uint16_t port;
@@ -25,170 +29,194 @@ int playGame(char const * gameFilePath, char * dealerHostname, char const * deal
   Action action;
   FILE *file, *toServer, *fromServer;
   struct timeval tv;
-  double probs[ NUM_ACTION_TYPES ];
-  double actionProbs[ NUM_ACTION_TYPES ];
+  double probs[NUM_ACTION_TYPES];
+  double actionProbs[NUM_ACTION_TYPES];
   rng_state_t rng;
-  char line[ MAX_LINE_LEN ];
+  char line[MAX_LINE_LEN];
 
   /* we make some assumptions about the actions - check them here */
-  assert( NUM_ACTION_TYPES == 3 );
+  assert(NUM_ACTION_TYPES == 3);
 
   /* Define the probabilities of actions for the player */
-  probs[ a_fold ] = 0.06;
-  probs[ a_call ] = ( 1.0 - probs[ a_fold ] ) * 0.5;
-  probs[ a_raise ] = ( 1.0 - probs[ a_fold ] ) * 0.5;
+  probs[a_fold] = 0.06;
+  probs[a_call] = (1.0 - probs[a_fold]) * 0.5;
+  probs[a_raise] = (1.0 - probs[a_fold]) * 0.5;
 
   /* Initialize the player's random number state using time */
-  gettimeofday( &tv, NULL );
-  init_genrand( &rng, tv.tv_usec );
+  gettimeofday(&tv, NULL);
+  init_genrand(&rng, tv.tv_usec);
 
   /* get the game */
-  file = fopen( gameFilePath, "r" );
-  if( file == NULL ) {
+  file = fopen(gameFilePath, "r");
+  if (file == NULL)
+  {
 
-    fprintf( stderr, "ERROR: could not open game %s\n", gameFilePath );
-    exit( EXIT_FAILURE );
+    fprintf(stderr, "ERROR: could not open game %s\n", gameFilePath);
+    exit(EXIT_FAILURE);
   }
-  game = readGame( file );
-  if( game == NULL ) {
+  game = readGame(file);
+  if (game == NULL)
+  {
 
-    fprintf( stderr, "ERROR: could not read game %s\n", gameFilePath );
-    exit( EXIT_FAILURE );
+    fprintf(stderr, "ERROR: could not read game %s\n", gameFilePath);
+    exit(EXIT_FAILURE);
   }
-  fclose( file );
+  fclose(file);
+
+  // Call python callback
+  fprintf(stdout, "%d\n", game->stack[0]);
+  on_game_start_func(game);
 
   /* connect to the dealer */
-  if( sscanf( dealerPort, "%"SCNu16, &port ) < 1 ) {
+  if (sscanf(dealerPort, "%" SCNu16, &port) < 1)
+  {
 
-    fprintf( stderr, "ERROR: invalid port %s\n", dealerPort );
-    exit( EXIT_FAILURE );
+    fprintf(stderr, "ERROR: invalid port %s\n", dealerPort);
+    exit(EXIT_FAILURE);
   }
-  sock = connectTo( dealerHostname, port );
-  if( sock < 0 ) {
+  sock = connectTo(dealerHostname, port);
+  if (sock < 0)
+  {
 
-    exit( EXIT_FAILURE );
+    exit(EXIT_FAILURE);
   }
-  toServer = fdopen( sock, "w" );
-  fromServer = fdopen( sock, "r" );
-  if( toServer == NULL || fromServer == NULL ) {
+  toServer = fdopen(sock, "w");
+  fromServer = fdopen(sock, "r");
+  if (toServer == NULL || fromServer == NULL)
+  {
 
-    fprintf( stderr, "ERROR: could not get socket streams\n" );
-    exit( EXIT_FAILURE );
+    fprintf(stderr, "ERROR: could not get socket streams\n");
+    exit(EXIT_FAILURE);
   }
 
   /* send version string to dealer */
-  if( fprintf( toServer, "VERSION:%"PRIu32".%"PRIu32".%"PRIu32"\n",
-	       VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION ) != 14 ) {
+  if (fprintf(toServer, "VERSION:%" PRIu32 ".%" PRIu32 ".%" PRIu32 "\n",
+              VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION) != 14)
+  {
 
-    fprintf( stderr, "ERROR: could not get send version to server\n" );
-    exit( EXIT_FAILURE );
+    fprintf(stderr, "ERROR: could not get send version to server\n");
+    exit(EXIT_FAILURE);
   }
-  fflush( toServer );
+  fflush(toServer);
 
   /* play the game! */
-  while( fgets( line, MAX_LINE_LEN, fromServer ) ) {
+  while (fgets(line, MAX_LINE_LEN, fromServer))
+  {
 
     /* ignore comments */
-    if( line[ 0 ] == '#' || line[ 0 ] == ';' ) {
+    if (line[0] == '#' || line[0] == ';')
+    {
       continue;
     }
 
-    len = readMatchState( line, game, &state );
-    if( len < 0 ) {
+    len = readMatchState(line, game, &state);
+    if (len < 0)
+    {
 
-      fprintf( stderr, "ERROR: could not read state %s", line );
-      exit( EXIT_FAILURE );
+      fprintf(stderr, "ERROR: could not read state %s", line);
+      exit(EXIT_FAILURE);
     }
 
-    if( stateFinished( &state.state ) ) {
+    if (stateFinished(&state.state))
+    {
       /* ignore the game over message */
 
       continue;
     }
 
-    if( currentPlayer( game, &state.state ) != state.viewingPlayer ) {
+    if (currentPlayer(game, &state.state) != state.viewingPlayer)
+    {
       /* we're not acting */
 
       continue;
     }
 
     /* add a colon (guaranteed to fit because we read a new-line in fgets) */
-    line[ len ] = ':';
+    line[len] = ':';
     ++len;
 
     /* build the set of valid actions */
     p = 0;
-    for( a = 0; a < NUM_ACTION_TYPES; ++a ) {
+    for (a = 0; a < NUM_ACTION_TYPES; ++a)
+    {
 
-      actionProbs[ a ] = 0.0;
+      actionProbs[a] = 0.0;
     }
 
     /* consider fold */
     action.type = a_fold;
     action.size = 0;
-    if( isValidAction( game, &state.state, 0, &action ) ) {
+    if (isValidAction(game, &state.state, 0, &action))
+    {
 
-      actionProbs[ a_fold ] = probs[ a_fold ];
-      p += probs[ a_fold ];
+      actionProbs[a_fold] = probs[a_fold];
+      p += probs[a_fold];
     }
 
     /* consider call */
     action.type = a_call;
     action.size = 0;
-    actionProbs[ a_call ] = probs[ a_call ];
-    p += probs[ a_call ];
+    actionProbs[a_call] = probs[a_call];
+    p += probs[a_call];
 
     /* consider raise */
-    if( raiseIsValid( game, &state.state, &min, &max ) ) {
+    if (raiseIsValid(game, &state.state, &min, &max))
+    {
 
-      actionProbs[ a_raise ] = probs[ a_raise ];
-      p += probs[ a_raise ];
+      actionProbs[a_raise] = probs[a_raise];
+      p += probs[a_raise];
     }
 
     /* normalise the probabilities  */
-    assert( p > 0.0 );
-    for( a = 0; a < NUM_ACTION_TYPES; ++a ) {
+    assert(p > 0.0);
+    for (a = 0; a < NUM_ACTION_TYPES; ++a)
+    {
 
-      actionProbs[ a ] /= p;
+      actionProbs[a] /= p;
     }
 
     /* choose one of the valid actions at random */
-    p = genrand_real2( &rng );
-    for( a = 0; a < NUM_ACTION_TYPES - 1; ++a ) {
+    p = genrand_real2(&rng);
+    for (a = 0; a < NUM_ACTION_TYPES - 1; ++a)
+    {
 
-      if( p <= actionProbs[ a ] ) {
+      if (p <= actionProbs[a])
+      {
 
         break;
       }
-      p -= actionProbs[ a ];
+      p -= actionProbs[a];
     }
     action.type = (enum ActionType)a;
-    if( a == a_raise ) {
+    if (a == a_raise)
+    {
 
-      action.size = min + genrand_int32( &rng ) % ( max - min + 1 );
+      action.size = min + genrand_int32(&rng) % (max - min + 1);
     }
 
     /* do the action! */
-    assert( isValidAction( game, &state.state, 0, &action ) );
-    r = printAction( game, &action, MAX_LINE_LEN - len - 2,
-		     &line[ len ] );
-    if( r < 0 ) {
+    assert(isValidAction(game, &state.state, 0, &action));
+    r = printAction(game, &action, MAX_LINE_LEN - len - 2,
+                    &line[len]);
+    if (r < 0)
+    {
 
-      fprintf( stderr, "ERROR: line too long after printing action\n" );
-      exit( EXIT_FAILURE );
+      fprintf(stderr, "ERROR: line too long after printing action\n");
+      exit(EXIT_FAILURE);
     }
     len += r;
-    line[ len ] = '\r';
+    line[len] = '\r';
     ++len;
-    line[ len ] = '\n';
+    line[len] = '\n';
     ++len;
 
-    if( fwrite( line, 1, len, toServer ) != len ) {
+    if (fwrite(line, 1, len, toServer) != len)
+    {
 
-      fprintf( stderr, "ERROR: could not get send response to server\n" );
-      exit( EXIT_FAILURE );
+      fprintf(stderr, "ERROR: could not get send response to server\n");
+      exit(EXIT_FAILURE);
     }
-    fflush( toServer );
+    fflush(toServer);
   }
 
   return EXIT_SUCCESS;
