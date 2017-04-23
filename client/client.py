@@ -11,7 +11,7 @@ class Agent(object):
         pass
 
     @abc.abstractmethod
-    def on_next_round(self, match_state_wrapper, action_wrapper):
+    def on_next_round(self, match_state_wrapper, is_acting_player, possible_actions_wrapper, action_wrapper):
         pass
 
     @abc.abstractmethod
@@ -25,12 +25,15 @@ class Client(object):
         self.game_file_path = game_file_path
         self.dealer_hostname = dealer_hostname
         self.dealer_port = dealer_port
-        # self.agent = agent
+        self.agent = None
 
-    def play_game(self):
+    def play_game(self, agent):
+        self.agent = agent
+
         on_game_start_func = CFUNCTYPE(None, POINTER(wrappers.GameWrapper))(self.on_game_start)
-        on_next_round_func = CFUNCTYPE(None, POINTER(wrappers.MatchStateWrapper), POINTER(wrappers.ActionWrapper)) \
-            (self.on_next_round)
+        on_next_round_func = CFUNCTYPE(None, POINTER(wrappers.MatchStateWrapper), c_bool,
+                                       POINTER(wrappers.PossibleActionsWrapper),
+                                       POINTER(wrappers.ActionWrapper))(self.on_next_round)
         on_game_finished_func = CFUNCTYPE(None, POINTER(wrappers.MatchStateWrapper))(self.on_game_finished)
         playerlib.playGame(bytes(self.game_file_path, 'utf-8'),
                            bytes(self.dealer_hostname, 'utf-8'),
@@ -40,13 +43,10 @@ class Client(object):
                            on_game_finished_func)
 
     def on_game_start(self, game_wrapper):
-        print('on game start')
-        # print(wrapper_to_str(game_wrapper))
-        # print(game_wrapper.contents.bettingType == limitBetting)
-        # print(game_wrapper.contents.bettingType == noLimitBetting)
+        self.agent.on_game_start(game_wrapper)
 
-    def on_next_round(self, match_state_wrapper, action_wrapper):
-        print('on next round')
+    def on_next_round(self, match_state_wrapper, is_acting_player, possible_actions_wrapper, action_wrapper):
+        self.agent.on_next_round(match_state_wrapper, is_acting_player, possible_actions_wrapper, action_wrapper)
 
     def on_game_finished(self, match_state_wrapper):
-        print('on game finished')
+        self.agent.on_game_finished(match_state_wrapper)

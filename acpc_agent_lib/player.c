@@ -10,7 +10,6 @@
 #include <netinet/tcp.h>
 #include <getopt.h>
 #include "../acpc_infrastructure/game.h"
-#include "../acpc_infrastructure/rng.h"
 #include "../acpc_infrastructure/net.h"
 
 #include "player.h"
@@ -18,34 +17,20 @@
 int playGame(char const *gameFilePath, char *dealerHostname,
              char const *dealerPort,
              void (*on_game_start_callback)(Game *),
-             void (*on_next_round_callback)(MatchState *, Action *),
+             void (*on_next_round_callback)(MatchState *, bool isActingPlayer, PossibleActions *, Action *),
              void (*on_game_finished_callback)(MatchState *))
 {
-  int sock, len, r, a;
-  int32_t min, max;
+  int sock, len, r;
   uint16_t port;
-  double p;
   Game *game;
   MatchState state;
   Action action;
+  PossibleActions possibleActions;
   FILE *file, *toServer, *fromServer;
-  struct timeval tv;
-  double probs[NUM_ACTION_TYPES];
-  double actionProbs[NUM_ACTION_TYPES];
-  rng_state_t rng;
   char line[MAX_LINE_LEN];
 
   /* we make some assumptions about the actions - check them here */
   assert(NUM_ACTION_TYPES == 3);
-
-  /* Define the probabilities of actions for the player */
-  probs[a_fold] = 0.06;
-  probs[a_call] = (1.0 - probs[a_fold]) * 0.5;
-  probs[a_raise] = (1.0 - probs[a_fold]) * 0.5;
-
-  /* Initialize the player's random number state using time */
-  gettimeofday(&tv, NULL);
-  init_genrand(&rng, tv.tv_usec);
 
   /* get the game */
   file = fopen(gameFilePath, "r");
@@ -96,7 +81,7 @@ int playGame(char const *gameFilePath, char *dealerHostname,
   }
   fflush(toServer);
 
-  int gameFinished = 1;
+  bool gameFinished = true;
 
   /* play the game! */
   while (fgets(line, MAX_LINE_LEN, fromServer))
@@ -119,21 +104,20 @@ int playGame(char const *gameFilePath, char *dealerHostname,
     if (stateFinished(&state.state))
     {
       on_game_finished_callback(&state);
-      gameFinished = 1;
+      gameFinished = true;
       continue;
     }
 
-    if (gameFinished) {
+    if (gameFinished)
+    {
       on_game_start_callback(game);
-      gameFinished = 0;
+      gameFinished = false;
     }
-
-    on_next_round_callback(&state, &action);
 
     if (currentPlayer(game, &state.state) != state.viewingPlayer)
     {
-      /* we're not acting */
-
+      on_next_round_callback(&state, false, NULL, NULL);
+      /* no action is required by server */
       continue;
     }
 
@@ -141,64 +125,17 @@ int playGame(char const *gameFilePath, char *dealerHostname,
     line[len] = ':';
     ++len;
 
-    /* build the set of valid actions */
-    p = 0;
-    for (a = 0; a < NUM_ACTION_TYPES; ++a)
-    {
-
-      actionProbs[a] = 0.0;
-    }
-
-    /* consider fold */
+    /* check if fold is valid */
     action.type = a_fold;
     action.size = 0;
-    if (isValidAction(game, &state.state, 0, &action))
-    {
+    possibleActions.foldValid = isValidAction(game, &state.state, 0, &action);
 
-      actionProbs[a_fold] = probs[a_fold];
-      p += probs[a_fold];
-    }
+    /* check if raise is valid and by how much */
+    possibleActions.raiseValid = raiseIsValid(game, &state.state,
+                                              &(possibleActions.raiseMin), &(possibleActions.raiseMax));
 
-    /* consider call */
-    action.type = a_call;
-    action.size = 0;
-    actionProbs[a_call] = probs[a_call];
-    p += probs[a_call];
-
-    /* consider raise */
-    if (raiseIsValid(game, &state.state, &min, &max))
-    {
-
-      actionProbs[a_raise] = probs[a_raise];
-      p += probs[a_raise];
-    }
-
-    /* normalise the probabilities  */
-    assert(p > 0.0);
-    for (a = 0; a < NUM_ACTION_TYPES; ++a)
-    {
-
-      actionProbs[a] /= p;
-    }
-
-    /* choose one of the valid actions at random */
-    p = genrand_real2(&rng);
-    for (a = 0; a < NUM_ACTION_TYPES - 1; ++a)
-    {
-
-      if (p <= actionProbs[a])
-      {
-
-        break;
-      }
-      p -= actionProbs[a];
-    }
-    action.type = (enum ActionType)a;
-    if (a == a_raise)
-    {
-
-      action.size = min + genrand_int32(&rng) % (max - min + 1);
-    }
+    /* call the python callback, it will set the action to the chose action */
+    on_next_round_callback(&state, true, &possibleActions, &action);
 
     /* do the action! */
     assert(isValidAction(game, &state.state, 0, &action));

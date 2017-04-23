@@ -56,3 +56,11 @@ class MatchStateWrapper(Structure):
     _fields_ = [
         ('state', StateWrapper),
         ('viewingPlayer', c_ubyte)]
+
+
+class PossibleActionsWrapper(Structure):
+    _fields_ = [
+        ('foldValid', c_bool),
+        ('raiseValid', c_bool),
+        ('raiseMin', c_uint),
+        ('raiseMax', c_uint)]
