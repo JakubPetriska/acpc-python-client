@@ -18,8 +18,9 @@ typedef struct
 int playGame(char const *gameFilePath,
              char *dealerHostname,
              char const *dealerPort,
-             void (*on_game_start_callback)(Game *),
-             void (*on_next_round_callback)(MatchState *, bool isActingPlayer, PossibleActions *, Action *),
-             void (*on_game_finished_callback)(MatchState *));
+             void (*initObjects)(Game *, MatchState *, PossibleActions *, Action *),
+             void (*on_game_start_callback)(),
+             void (*on_next_round_callback)(bool isActingPlayer),
+             void (*on_game_finished_callback)());
 
 #endif /* PLAYER_H */

@@ -16,9 +16,10 @@
 
 int playGame(char const *gameFilePath, char *dealerHostname,
              char const *dealerPort,
-             void (*on_game_start_callback)(Game *),
-             void (*on_next_round_callback)(MatchState *, bool isActingPlayer, PossibleActions *, Action *),
-             void (*on_game_finished_callback)(MatchState *))
+             void (*initObjects)(Game *, MatchState *, PossibleActions *, Action *),
+             void (*onGameStartCallback)(),
+             void (*onNextRoundCallback)(bool isActingPlayer),
+             void (*onGameFinishedCallback)())
 {
   int sock, len, r;
   uint16_t port;
@@ -48,6 +49,8 @@ int playGame(char const *gameFilePath, char *dealerHostname,
     exit(EXIT_FAILURE);
   }
   fclose(file);
+
+  initObjects(game, &state, &possibleActions, &action);
 
   /* connect to the dealer */
   if (sscanf(dealerPort, "%" SCNu16, &port) < 1)
@@ -103,20 +106,20 @@ int playGame(char const *gameFilePath, char *dealerHostname,
 
     if (stateFinished(&state.state))
     {
-      on_game_finished_callback(&state);
+      onGameFinishedCallback();
       gameFinished = true;
       continue;
     }
 
     if (gameFinished)
     {
-      on_game_start_callback(game);
+      onGameStartCallback();
       gameFinished = false;
     }
 
     if (currentPlayer(game, &state.state) != state.viewingPlayer)
     {
-      on_next_round_callback(&state, false, NULL, NULL);
+      onNextRoundCallback(false);
       /* no action is required by server */
       continue;
     }
@@ -135,7 +138,7 @@ int playGame(char const *gameFilePath, char *dealerHostname,
                                               &(possibleActions.raiseMin), &(possibleActions.raiseMax));
 
     /* call the python callback, it will set the action to the chose action */
-    on_next_round_callback(&state, true, &possibleActions, &action);
+    onNextRoundCallback(true);
 
     /* do the action! */
     assert(isValidAction(game, &state.state, 0, &action));
