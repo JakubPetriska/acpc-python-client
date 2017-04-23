@@ -17,8 +17,9 @@
 
 int playGame(char const *gameFilePath, char *dealerHostname,
              char const *dealerPort,
-             void (*on_game_start_func)(Game *),
-             void (*on_next_round_func)())
+             void (*on_game_start_callback)(Game *),
+             void (*on_next_round_callback)(MatchState *, Action *),
+             void (*on_game_finished_callback)(MatchState *))
 {
   int sock, len, r, a;
   int32_t min, max;
@@ -63,10 +64,6 @@ int playGame(char const *gameFilePath, char *dealerHostname,
   }
   fclose(file);
 
-  // Call python callback
-  fprintf(stdout, "%d\n", game->stack[0]);
-  on_game_start_func(game);
-
   /* connect to the dealer */
   if (sscanf(dealerPort, "%" SCNu16, &port) < 1)
   {
@@ -99,6 +96,8 @@ int playGame(char const *gameFilePath, char *dealerHostname,
   }
   fflush(toServer);
 
+  int gameFinished = 1;
+
   /* play the game! */
   while (fgets(line, MAX_LINE_LEN, fromServer))
   {
@@ -119,10 +118,17 @@ int playGame(char const *gameFilePath, char *dealerHostname,
 
     if (stateFinished(&state.state))
     {
-      /* ignore the game over message */
-
+      on_game_finished_callback(&state);
+      gameFinished = 1;
       continue;
     }
+
+    if (gameFinished) {
+      on_game_start_callback(game);
+      gameFinished = 0;
+    }
+
+    on_next_round_callback(&state, &action);
 
     if (currentPlayer(game, &state.state) != state.viewingPlayer)
     {
