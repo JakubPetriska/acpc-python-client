@@ -2,40 +2,45 @@ import json
 
 import sys
 
+_NUMBERS = (int, float)
 
-def wrapper_to_str(wrapper_object):
-    type_fields = type(wrapper_object)._type_._fields_
 
-    # Create strings containing "name": value from fields on the object in json format
-    attribute_names = [field[0] for field in type_fields]
-    attribute_vals = [getattr(wrapper_object.contents, field[0]) for field in type_fields]
-    attribute_vals_strings = [None] * len(attribute_vals)
-    for i in range(len(attribute_vals)):
-        attr = attribute_vals[i]
-        if hasattr(attr, '_length_'):
-            # Attribute is an array
-            attribute_vals_strings[i] = '[ %s ]' % ', '.join([str(e) for e in attr])
-        elif type(attr) == bool:
-            # Attribute is a boolean, proper boolean string needs to be used
-            attribute_vals_strings[i] = 'true' if attr else 'false'
+def wrapper_to_str(wrapper_object, formatted=True, contents_only=False):
+    if isinstance(wrapper_object, str):
+        return wrapper_object
+    elif isinstance(wrapper_object, _NUMBERS):
+        return str(wrapper_object)
+    elif isinstance(wrapper_object, bool):
+        return 'true' if wrapper_object else 'false'
+    elif hasattr(wrapper_object, '_length_'):
+        # Object is special C array wrapper class
+        return '[ %s ]' % ', '.join([wrapper_to_str(e, False, True) for e in wrapper_object])
+    else:
+        # Object is wrapped structure
+        has_contents = hasattr(wrapper_object, 'contents')
+        type_fields = wrapper_object.contents._fields_ if has_contents else wrapper_object._fields_
+
+        # Create strings containing "name": value from fields on the object in json format
+        attribute_names = [field[0] for field in type_fields]
+        attribute_vals = [getattr(wrapper_object.contents if has_contents else wrapper_object, field[0])
+                          for field in type_fields]
+        attribute_vals_strings = [wrapper_to_str(attr_val, False, True) for attr_val in attribute_vals]
+        attribute_strings = ['"%s": %s' % attr for attr in zip(attribute_names, attribute_vals_strings)]
+
+        # Pretty print it with json module
+        json_string = '{ %s }' % ', '.join(attribute_strings)
+        if formatted:
+            try:
+                json_object = json.loads(json_string)
+            except:
+                print('Unexpected error:', sys.exc_info()[0])
+                print('Error while json parsing following json string:')
+                print(json_string)
+                raise
+            json_string = json.dumps(json_object, sort_keys=False, indent=4)
+        if contents_only:
+            return json_string
         else:
-            attribute_vals_strings[i] = str(attr)
-    attribute_strings = ['"%s": %s' % attr for attr in zip(attribute_names, attribute_vals_strings)]
-
-    # Pretty print it with json module
-    json_string = '{ %s }' % ', '.join(attribute_strings)
-    try:
-        json_object = json.loads(json_string)
-    except:
-        print('Unexpected error:', sys.exc_info()[0])
-        print('Error while json parsing following json string:')
-        print(json_string)
-        raise
-    try:
-        formatted_json_string = json.dumps(json_object, sort_keys=False, indent=4)
-        return '%s: %s' % (type(wrapper_object)._type_.__name__, formatted_json_string)
-    except:
-        print('Unexpected error:', sys.exc_info()[0])
-        print('Error while json formatting following object:')
-        print(str(json_object))
-        raise
+            object_name = \
+                (wrapper_object._type_ if hasattr(wrapper_object, '_type_') else type(wrapper_object)).__name__
+            return '%s: %s' % (object_name, json_string)
