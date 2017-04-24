@@ -98,13 +98,13 @@ class Client(object):
         self._agent._setup(self, possible_actions_wrapper)
 
     def _on_game_start(self):
-        self._agent.on_game_start()
+        self._agent.on_game_start(self._game)
 
     def _on_next_round(self, is_acting_player):
         self._action_set = False
-        self._agent.on_next_round(is_acting_player)
+        self._agent.on_next_round(self._game, None, is_acting_player)
         if is_acting_player and not self._action_set:
             raise RuntimeError('No action was set by agent when it was acting')
 
     def _on_game_finished(self):
-        self._agent.on_game_finished()
+        self._agent.on_game_finished(self._game, None)
