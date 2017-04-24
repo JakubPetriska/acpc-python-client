@@ -17,10 +17,10 @@ class RandomAgent(cl.Agent):
         self.action_probabilities[1] = (1 - self.action_probabilities[0]) * 0.5  # call probability
         self.action_probabilities[2] = (1 - self.action_probabilities[0]) * 0.5  # raise probability
 
-    def on_game_start(self):
+    def on_game_start(self, game):
         pass
 
-    def on_next_round(self, is_acting_player):
+    def on_next_round(self, game, match_state, is_acting_player):
         if is_acting_player:
             # Create current action probabilities, leave out invalid actions
             current_probabilities = [0] * 3
@@ -52,8 +52,9 @@ class RandomAgent(cl.Agent):
             else:
                 self.set_next_action(action_type)
 
-    def on_game_finished(self):
+    def on_game_finished(self, game, match_state):
         pass
+
 
 client = cl.Client(sys.argv[1], sys.argv[2], sys.argv[3])
 client.play_game(RandomAgent())

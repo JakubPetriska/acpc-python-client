@@ -4,7 +4,7 @@ from ctypes import *
 import client.wrappers as wrappers
 from acpc_agent_lib import playerlib
 from client import utils
-from client.data import ActionType
+from client.data import ActionType, Game
 
 
 class Agent(object):
@@ -35,15 +35,15 @@ class Agent(object):
         self._client._set_next_action(action_type, raise_size)
 
     @abc.abstractmethod
-    def on_game_start(self):
+    def on_game_start(self, game):
         pass
 
     @abc.abstractmethod
-    def on_next_round(self, is_acting_player):
+    def on_next_round(self, game, match_state, is_acting_player):
         pass
 
     @abc.abstractmethod
-    def on_game_finished(self):
+    def on_game_finished(self, game, match_state):
         pass
 
 
@@ -91,8 +91,10 @@ class Client(object):
             self._action_wrapper.contents.size = 0
         self._action_set = True
 
-    def _init_objects(self, game_wrapper, match_state_wrapper, possible_actions_wrapper, action_wrapper):
+    def _init_objects(self, game_wrapper, match_state_wrapper,
+                      possible_actions_wrapper, action_wrapper):
         self._action_wrapper = action_wrapper
+        self._game = Game(game_wrapper)
         self._agent._setup(self, possible_actions_wrapper)
 
     def _on_game_start(self):

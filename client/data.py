@@ -1,5 +1,7 @@
 from enum import Enum
 
+from client import utils
+
 
 class BettingType(Enum):
     LIMIT = 1,
@@ -16,21 +18,53 @@ class ActionType(Enum):
 class _BaseDataObject(object):
     def __init__(self, wrapper):
         super().__init__()
-        self.data_holder = wrapper.contents if hasattr(wrapper, 'contents') else wrapper
+        self._data_holder = wrapper.contents if hasattr(wrapper, 'contents') else wrapper
 
 
-class PossibleActionsWrapper(_BaseDataObject):
+class Game(_BaseDataObject):
     def __init__(self, wrapper):
         super().__init__(wrapper)
 
-    def get_fold_valid(self):
-        return self.data_holder.foldValid
+    def get_stack(self):
+        return self._data_holder.stack
 
-    def get_raise_valid(self):
-        return self.data_holder.raiseValid
+    def get_blind(self):
+        return self._data_holder.blind
 
-    def get_raise_min(self):
-        return self.data_holder.raiseMin
+    def get_raise_size(self):
+        return self._data_holder.raiseSize
 
-    def get_raise_max(self):
-        return self.data_holder.raiseMax
+    def get_betting_type(self):
+        return utils.betting_type_int_to_enum(self._data_holder.bettingType)
+
+    def get_num_players(self):
+        return self._data_holder.numPlayers
+
+    def get_num_rounds(self):
+        return self._data_holder.numRounds
+
+    def get_first_player(self):
+        return self._data_holder.firstPlayer
+
+    def get_max_raises(self):
+        return self._data_holder.maxRaises
+
+    def get_num_suits(self):
+        return self._data_holder.numSuits
+
+    def get_num_ranks(self):
+        return self._data_holder.numRanks
+
+    def get_num_hole_cards(self):
+        return self._data_holder.numHoleCards
+
+    def get_num_board_cards(self):
+        return self._data_holder.numBoardCards
+
+
+class State(_BaseDataObject):
+    def __init__(self, wrapper):
+        super().__init__(wrapper)
+
+    def get_stack(self):
+        return self._data_holder.stack

@@ -2,7 +2,7 @@ import json
 import sys
 
 from client import wrappers
-from client.data import ActionType
+from client.data import ActionType, BettingType
 
 _NUMBERS = (int, float)
 
@@ -57,3 +57,12 @@ def action_type_enum_to_int(action_type):
         return wrappers.a_raise
     else:
         raise ValueError('Unknown action type')
+
+
+def betting_type_int_to_enum(betting_type):
+    if betting_type == wrappers.limitBetting:
+        return BettingType.LIMIT
+    elif betting_type == wrappers.noLimitBetting:
+        return BettingType.NO_LIMIT
+    else:
+        raise ValueError('Unknown betting type')
