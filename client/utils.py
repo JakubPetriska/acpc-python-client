@@ -1,6 +1,8 @@
 import json
-
 import sys
+
+from client import wrappers
+from client.data import ActionType
 
 _NUMBERS = (int, float)
 
@@ -44,3 +46,14 @@ def wrapper_to_str(wrapper_object, formatted=True, contents_only=False):
             object_name = \
                 (wrapper_object._type_ if hasattr(wrapper_object, '_type_') else type(wrapper_object)).__name__
             return '%s: %s' % (object_name, json_string)
+
+
+def action_type_enum_to_int(action_type):
+    if action_type == ActionType.FOLD:
+        return wrappers.a_fold
+    elif action_type == ActionType.CALL:
+        return wrappers.a_call
+    elif action_type == ActionType.RAISE:
+        return wrappers.a_raise
+    else:
+        raise ValueError('Unknown action type')
