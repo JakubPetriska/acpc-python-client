@@ -4,7 +4,7 @@ from ctypes import *
 import client.wrappers as wrappers
 from acpc_agent_lib import playerlib
 from client import utils
-from client.data import ActionType, Game
+from client.data import ActionType, Game, MatchState
 
 
 class Agent(object):
@@ -95,6 +95,7 @@ class Client(object):
                       possible_actions_wrapper, action_wrapper):
         self._action_wrapper = action_wrapper
         self._game = Game(game_wrapper)
+        self._match_state = MatchState(match_state_wrapper)
         self._agent._setup(self, possible_actions_wrapper)
 
     def _on_game_start(self):
@@ -102,7 +103,7 @@ class Client(object):
 
     def _on_next_round(self, is_acting_player):
         self._action_set = False
-        self._agent.on_next_round(self._game, None, is_acting_player)
+        self._agent.on_next_round(self._game, self._match_state, is_acting_player)
         if is_acting_player and not self._action_set:
             raise RuntimeError('No action was set by agent when it was acting')
 

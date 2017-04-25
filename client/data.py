@@ -66,5 +66,50 @@ class State(_BaseDataObject):
     def __init__(self, wrapper):
         super().__init__(wrapper)
 
-    def get_stack(self):
-        return self._data_holder.stack
+    def get_hand_id(self):
+        return self._data_holder.handId
+
+    def get_max_spent(self):
+        return self._data_holder.maxSpent
+
+    def get_min_no_limit_raise_to(self):
+        return self._data_holder.minNoLimitRaiseTo
+
+    def get_spent(self):
+        return self._data_holder.spent
+
+    def get_action(self):
+        return self._data_holder.action
+
+    def get_acting_player(self):
+        return self._data_holder.actingPlayer
+
+    def get_num_actions(self):
+        return self._data_holder.numActions
+
+    def get_round(self):
+        return self._data_holder.round
+
+    def get_finished(self):
+        return self._data_holder.finished
+
+    def get_player_folded(self):
+        return self._data_holder.playerFolded
+
+    def get_board_cards(self):
+        return self._data_holder.boardCards
+
+    def get_hole_cards(self):
+        return self._data_holder.holeCards
+
+
+class MatchState(_BaseDataObject):
+    def __init__(self, wrapper):
+        super().__init__(wrapper)
+        self._state = State(wrapper.contents.state)
+
+    def get_state(self):
+        return self._state
+
+    def get_viewing_player(self):
+        return self._data_holder.viewingPlayer
