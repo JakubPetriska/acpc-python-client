@@ -4,11 +4,13 @@ from client import utils
 
 
 class BettingType(Enum):
+    """Represents game type of betting."""
     LIMIT = 1,
     NO_LIMIT = 2
 
 
 class ActionType(Enum):
+    """Represents type of action."""
     FOLD = 1,
     CALL = 2,
     RAISE = 3,
