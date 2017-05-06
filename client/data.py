@@ -87,8 +87,9 @@ class Game(_BaseDataObject):
 
 
 class State(_BaseDataObject):
-    def __init__(self, wrapper):
+    def __init__(self, wrapper, game):
         super().__init__(wrapper)
+        self._game = game
 
     def get_hand_id(self):
         return self._data_holder.handId
@@ -99,9 +100,12 @@ class State(_BaseDataObject):
     def get_min_no_limit_raise_to(self):
         return self._data_holder.minNoLimitRaiseTo
 
-    def get_spent(self):
-        # TODO indexing
-        return self._data_holder.spent
+    def get_spent(self, player_index):
+        if player_index > self._game.get_num_players():
+            raise ValueError(
+                'Cannot retrieve spent amount for player %s with %s players total'
+                % (player_index, self._game.get_num_players()))
+        return self._data_holder.spent[player_index]
 
     def get_action(self):
         # TODO indexing
@@ -121,11 +125,14 @@ class State(_BaseDataObject):
     def get_finished(self):
         return self._data_holder.finished
 
-    def get_player_folded(self):
-        # TODO indexing
-        return self._data_holder.playerFolded
+    def get_player_folded(self, player_index):
+        if player_index > self._game.get_num_players():
+            raise ValueError(
+                'Cannot know if player %s folded with %s players total'
+                % (player_index, self._game.get_num_players()))
+        return self._data_holder.playerFolded[player_index] > 0
 
-    def get_board_cards(self):
+    def get_board_card(self,):
         # TODO indexing
         return self._data_holder.boardCards
 
@@ -135,9 +142,9 @@ class State(_BaseDataObject):
 
 
 class MatchState(_BaseDataObject):
-    def __init__(self, wrapper):
+    def __init__(self, wrapper, game):
         super().__init__(wrapper)
-        self._state = State(wrapper.contents.state)
+        self._state = State(wrapper.contents.state, game)
 
     def get_state(self):
         return self._state

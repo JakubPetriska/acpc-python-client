@@ -95,7 +95,7 @@ class Client(object):
                       possible_actions_wrapper, action_wrapper):
         self._action_wrapper = action_wrapper
         self._game = Game(game_wrapper)
-        self._match_state = MatchState(match_state_wrapper)
+        self._match_state = MatchState(match_state_wrapper, self._game)
         self._agent._setup(self, possible_actions_wrapper)
 
     def _on_game_start(self):
