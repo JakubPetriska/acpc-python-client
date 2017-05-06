@@ -25,14 +25,26 @@ class Game(_BaseDataObject):
     def __init__(self, wrapper):
         super().__init__(wrapper)
 
-    def get_stack(self):
-        return self._data_holder.stack
+    def get_stack(self, player_index):
+        if player_index > self.get_num_players():
+            raise ValueError(
+                'Cannot retrieve stack for player %s with %s players total'
+                % (player_index, self.get_num_players()))
+        return self._data_holder.stack[player_index]
 
-    def get_blind(self):
+    def get_blind(self, player_index):
+        if player_index > self.get_num_players():
+            raise ValueError(
+                'Cannot retrieve stack for player %s with %s players total'
+                % (player_index, self.get_num_players()))
         return self._data_holder.blind
 
-    def get_raise_size(self):
-        return self._data_holder.raiseSize
+    def get_raise_size(self, round_index):
+        if round_index > self.get_num_rounds():
+            raise ValueError(
+                'Cannot retrieve raise size in round %s in game with %s rounds'
+                % (round_index, self.get_num_rounds()))
+        return self._data_holder.raiseSize[round_index]
 
     def get_betting_type(self):
         return utils.betting_type_int_to_enum(self._data_holder.bettingType)
@@ -43,11 +55,19 @@ class Game(_BaseDataObject):
     def get_num_rounds(self):
         return self._data_holder.numRounds
 
-    def get_first_player(self):
-        return self._data_holder.firstPlayer
+    def get_first_player(self, round_index):
+        if round_index > self.get_num_rounds():
+            raise ValueError(
+                'Cannot retrieve first player in round %s in game with %s rounds'
+                % (round_index, self.get_num_rounds()))
+        return self._data_holder.firstPlayer[round_index]
 
-    def get_max_raises(self):
-        return self._data_holder.maxRaises
+    def get_max_raises(self, round_index):
+        if round_index > self.get_num_rounds():
+            raise ValueError(
+                'Cannot retrieve max number of raises in round %s in game with %s rounds'
+                % (round_index, self.get_num_rounds()))
+        return self._data_holder.maxRaises[round_index]
 
     def get_num_suits(self):
         return self._data_holder.numSuits
@@ -58,8 +78,12 @@ class Game(_BaseDataObject):
     def get_num_hole_cards(self):
         return self._data_holder.numHoleCards
 
-    def get_num_board_cards(self):
-        return self._data_holder.numBoardCards
+    def get_num_board_cards(self, round_index):
+        if round_index > self.get_num_rounds():
+            raise ValueError(
+                'Cannot retrieve number of board cards in round %s in game with %s rounds'
+                % (round_index, self.get_num_rounds()))
+        return self._data_holder.numBoardCards[round_index]
 
 
 class State(_BaseDataObject):
@@ -76,15 +100,19 @@ class State(_BaseDataObject):
         return self._data_holder.minNoLimitRaiseTo
 
     def get_spent(self):
+        # TODO indexing
         return self._data_holder.spent
 
     def get_action(self):
+        # TODO indexing
         return self._data_holder.action
 
     def get_acting_player(self):
+        # TODO indexing
         return self._data_holder.actingPlayer
 
     def get_num_actions(self):
+        # TODO indexing
         return self._data_holder.numActions
 
     def get_round(self):
@@ -94,12 +122,15 @@ class State(_BaseDataObject):
         return self._data_holder.finished
 
     def get_player_folded(self):
+        # TODO indexing
         return self._data_holder.playerFolded
 
     def get_board_cards(self):
+        # TODO indexing
         return self._data_holder.boardCards
 
     def get_hole_cards(self):
+        # TODO indexing
         return self._data_holder.holeCards
 
 
