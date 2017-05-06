@@ -54,8 +54,8 @@ class StateWrapper(Structure):
 
 class MatchStateWrapper(Structure):
     _fields_ = [
-        ('state', StateWrapper),
-        ('viewingPlayer', c_ubyte)]
+        ('viewingPlayer', c_ubyte),
+        ('state', StateWrapper)]
 
 
 class PossibleActionsWrapper(Structure):
