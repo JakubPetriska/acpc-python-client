@@ -82,7 +82,7 @@ class Agent(object):
         pass
 
     @abc.abstractmethod
-    def on_next_round(self, game, match_state, is_acting_player):
+    def on_next_turn(self, game, match_state, is_acting_player):
         """Called on each player's turn.
 
         This is called even on turns of other players when the agent is not acting.
@@ -161,7 +161,7 @@ class Client(object):
 
     def _on_next_round(self, is_acting_player):
         self._action_set = False
-        self._agent.on_next_round(self._game, self._match_state, is_acting_player)
+        self._agent.on_next_turn(self._game, self._match_state, is_acting_player)
         if is_acting_player and not self._action_set:
             raise RuntimeError('No action was set by agent when it was acting')
 

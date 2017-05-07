@@ -20,7 +20,7 @@ class RandomAgent(cl.Agent):
     def on_game_start(self, game):
         pass
 
-    def on_next_round(self, game, match_state, is_acting_player):
+    def on_next_turn(self, game, match_state, is_acting_player):
         if is_acting_player:
             # Create current action probabilities, leave out invalid actions
             current_probabilities = [0] * 3

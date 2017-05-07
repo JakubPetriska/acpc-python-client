@@ -18,7 +18,7 @@ int playGame(char const *gameFilePath, char *dealerHostname,
              char const *dealerPort,
              void (*initObjects)(Game *, MatchState *, PossibleActions *, Action *),
              void (*onGameStartCallback)(),
-             void (*onNextRoundCallback)(bool isActingPlayer),
+             void (*onNextTurnCallback)(bool isActingPlayer),
              void (*onGameFinishedCallback)())
 {
   int sock, len, r;
@@ -119,7 +119,7 @@ int playGame(char const *gameFilePath, char *dealerHostname,
 
     if (currentPlayer(game, &state.state) != state.viewingPlayer)
     {
-      onNextRoundCallback(false);
+      onNextTurnCallback(false);
       /* no action is required by server */
       continue;
     }
@@ -138,7 +138,7 @@ int playGame(char const *gameFilePath, char *dealerHostname,
                                               &(possibleActions.raiseMin), &(possibleActions.raiseMax));
 
     /* call the python callback, it will set the action to the chose action */
-    onNextRoundCallback(true);
+    onNextTurnCallback(true);
 
     /* do the action! */
     assert(isValidAction(game, &state.state, 0, &action));
