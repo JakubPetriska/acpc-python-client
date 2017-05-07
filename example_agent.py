@@ -57,4 +57,4 @@ class RandomAgent(cl.Agent):
 
 
 client = cl.Client(sys.argv[1], sys.argv[2], sys.argv[3])
-client.play_game(RandomAgent())
+client.play(RandomAgent())

@@ -136,7 +136,7 @@ class Client(object):
 
         self._action_set = False
 
-    def play_game(self, agent):
+    def play(self, agent):
         """Begin playing games.
 
         Args:
