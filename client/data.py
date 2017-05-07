@@ -193,17 +193,43 @@ class Game(_BaseDataObject):
 
 
 class State(_BaseDataObject):
+    """State of the game."""
+
     def __init__(self, wrapper, game):
         super().__init__(wrapper)
         self._game = game
 
     def get_max_spent(self):
+        """Returns the largest bet so far, including all previous rounds.
+
+        Returns:
+            int: The largest bet so far, including all previous rounds.
+        """
         return self._data_holder.maxSpent
 
     def get_min_no_limit_raise_to(self):
+        """Returns minimum number of chips a player must have spend in total to raise.
+
+        Only used for noLimitBetting games.
+
+        Returns:
+            int: Minimum number of chips a player must have spend in total to raise.
+        """
         return self._data_holder.minNoLimitRaiseTo
 
     def get_spent(self, player_index):
+        """Returns the total amount put into the pot by given player.
+
+        Args:
+            player_index (int): Index of the player
+
+        Returns:
+            int: The total amount put into the pot by given player.
+
+        Raises:
+            ValueError: When player_index is greater or equal
+                        to number of players in the game.
+        """
         if player_index >= self._game.get_num_players():
             raise ValueError(
                 'Cannot retrieve spent amount for player %s with %s players total'
@@ -212,9 +238,25 @@ class State(_BaseDataObject):
 
     def get_action(self):
         # TODO indexing
+        # TODO doc
         return self._data_holder.action
 
     def get_acting_player(self, round_index, action_index):
+        """Returns index of the acting player for given action in given round.
+
+        Args:
+            round_index (int): Index of the round.
+            action_index (int): Index of the action.
+
+        Returns:
+            int: Index of the acting player for given action in given round.
+
+        Raises:
+            ValueError: When round_index is greater or equal
+                        to number of rounds in the game so far.
+            ValueError: When action_index is greater or equal
+                        to number of actions in given round.
+        """
         if round_index > self.get_round():
             raise ValueError(
                 'Cannot retrieve acting player in round %s and action %s, game is in round %s'
@@ -227,6 +269,18 @@ class State(_BaseDataObject):
         return self._data_holder.actingPlayer[round_index][action_index]
 
     def get_num_actions(self, round_index):
+        """Returns number of actions in given round.
+
+        Args:
+            round_index (int): Index of the round.
+
+        Returns:
+            int: Number of actions in given round.
+
+        Raises:
+            ValueError: When round_index is greater or equal
+                        to number of rounds in the game so far.
+        """
         if round_index > self.get_round():
             raise ValueError(
                 'Cannot retrieve number of actions in round %s, game is in round %s'
@@ -234,24 +288,40 @@ class State(_BaseDataObject):
         return self._data_holder.numActions[round_index]
 
     def get_round(self):
+        """Returns index of the current round of the game.
+
+        Returns:
+            int: Index of the current round of the game.
+        """
         return self._data_holder.round
 
-    def get_finished(self):
-        return self._data_holder.finished
-
     def get_player_folded(self, player_index):
+        """Returns whether given player has folded.
+
+        Args:
+            player_index (int): Index of the player.
+
+        Returns:
+            bool: True if player has folded, False otherwise.
+
+        Raises:
+            ValueError: When player_index is greater or equal
+                        to number of players in the game.
+        """
         if player_index >= self._game.get_num_players():
             raise ValueError(
                 'Cannot know if player %s folded with %s players total'
                 % (player_index, self._game.get_num_players()))
-        return self._data_holder.playerFolded[player_index] > 0
+        return self._data_holder.playerFolded[player_index] != 0
 
     def get_board_card(self,):
         # TODO indexing
+        # TODO doc
         return self._data_holder.boardCards
 
     def get_hole_cards(self):
         # TODO indexing
+        # TODO doc
         return self._data_holder.holeCards
 
 
