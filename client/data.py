@@ -42,7 +42,7 @@ class Game(_BaseDataObject):
             ValueError: When player_index is greater or equal
                         to number of players in the game.
         """
-        if player_index > self.get_num_players():
+        if player_index >= self.get_num_players():
             raise ValueError(
                 'Cannot retrieve stack for player %s with %s players total'
                 % (player_index, self.get_num_players()))
@@ -61,7 +61,7 @@ class Game(_BaseDataObject):
             ValueError: When player_index is greater or equal
                         to number of players in the game.
         """
-        if player_index > self.get_num_players():
+        if player_index >= self.get_num_players():
             raise ValueError(
                 'Cannot retrieve stack for player %s with %s players total'
                 % (player_index, self.get_num_players()))
@@ -80,7 +80,7 @@ class Game(_BaseDataObject):
             ValueError: When round_index is greater or equal
                         to number of rounds in the game.
         """
-        if round_index > self.get_num_rounds():
+        if round_index >= self.get_num_rounds():
             raise ValueError(
                 'Cannot retrieve raise size in round %s in game with %s rounds'
                 % (round_index, self.get_num_rounds()))
@@ -123,7 +123,7 @@ class Game(_BaseDataObject):
             ValueError: When round_index is greater or equal
                         to number of rounds in the game.
         """
-        if round_index > self.get_num_rounds():
+        if round_index >= self.get_num_rounds():
             raise ValueError(
                 'Cannot retrieve first player in round %s in game with %s rounds'
                 % (round_index, self.get_num_rounds()))
@@ -142,7 +142,7 @@ class Game(_BaseDataObject):
             ValueError: When round_index is greater or equal
                         to number of rounds in the game.
         """
-        if round_index > self.get_num_rounds():
+        if round_index >= self.get_num_rounds():
             raise ValueError(
                 'Cannot retrieve max number of raises in round %s in game with %s rounds'
                 % (round_index, self.get_num_rounds()))
@@ -185,7 +185,7 @@ class Game(_BaseDataObject):
             ValueError: When round_index is greater or equal
                         to number of rounds in the game.
         """
-        if round_index > self.get_num_rounds():
+        if round_index >= self.get_num_rounds():
             raise ValueError(
                 'Cannot retrieve number of board cards in round %s in game with %s rounds'
                 % (round_index, self.get_num_rounds()))
@@ -204,7 +204,7 @@ class State(_BaseDataObject):
         return self._data_holder.minNoLimitRaiseTo
 
     def get_spent(self, player_index):
-        if player_index > self._game.get_num_players():
+        if player_index >= self._game.get_num_players():
             raise ValueError(
                 'Cannot retrieve spent amount for player %s with %s players total'
                 % (player_index, self._game.get_num_players()))
@@ -229,7 +229,7 @@ class State(_BaseDataObject):
         return self._data_holder.finished
 
     def get_player_folded(self, player_index):
-        if player_index > self._game.get_num_players():
+        if player_index >= self._game.get_num_players():
             raise ValueError(
                 'Cannot know if player %s folded with %s players total'
                 % (player_index, self._game.get_num_players()))
