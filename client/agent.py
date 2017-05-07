@@ -108,7 +108,19 @@ class Agent(object):
 
 
 class Client(object):
+    """Client that handles the game.
+
+    Contains all logic needed to play the game, such as connection to dealer server.
+    """
+
     def __init__(self, game_file_path, dealer_hostname, dealer_port):
+        """Initializes the Client.
+
+        Args:
+            game_file_path (str): Path to game definition file.
+            dealer_hostname (str): Hostname of dealer server.
+            dealer_port (str): Port that dealer server accepts the connection on.
+        """
         super().__init__()
         self._game_file_path = game_file_path
         self._dealer_hostname = dealer_hostname
@@ -125,6 +137,11 @@ class Client(object):
         self._action_set = False
 
     def play_game(self, agent):
+        """Begin playing games.
+
+        Args:
+            agent (Agent): Agent instance.
+        """
         if not agent:
             raise ValueError('No agent provided to Client')
         self._agent = agent
