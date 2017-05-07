@@ -48,7 +48,7 @@ class RandomAgent(cl.Agent):
                 raise_min = self.get_raise_min()
                 raise_max = self.get_raise_max()
                 raise_size = raise_min + (raise_max - raise_min) * random.random()
-                self.set_next_action(action_type, round(raise_size))
+                self.set_next_action(action_type, int(round(raise_size)))
             else:
                 self.set_next_action(action_type)
 
