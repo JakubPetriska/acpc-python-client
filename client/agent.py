@@ -1,8 +1,8 @@
 import abc
-from ctypes import *
+import ctypes as ctypes
 
 import client.wrappers as wrappers
-from acpc_agent_lib import playerlib
+import acpc_agent_lib as lib
 from client import utils
 from client.data import ActionType, Game, MatchState
 
@@ -69,19 +69,17 @@ class Client(object):
             raise ValueError('No agent provided to Client')
         self._agent = agent
 
-        init_objects_func = CFUNCTYPE(None, POINTER(wrappers.GameWrapper), POINTER(wrappers.MatchStateWrapper),
-                                      POINTER(wrappers.PossibleActionsWrapper),
-                                      POINTER(wrappers.ActionWrapper))(self._init_objects)
-        on_game_start_func = CFUNCTYPE(None)(self._on_game_start)
-        on_next_round_func = CFUNCTYPE(None, c_bool)(self._on_next_round)
-        on_game_finished_func = CFUNCTYPE(None)(self._on_game_finished)
-        playerlib.playGame(bytes(self._game_file_path, 'utf-8'),
+        init_objects_func = ctypes.CFUNCTYPE(None, ctypes.POINTER(wrappers.GameWrapper),
+                                             ctypes.POINTER(wrappers.MatchStateWrapper),
+                                             ctypes.POINTER(wrappers.PossibleActionsWrapper),
+                                             ctypes.POINTER(wrappers.ActionWrapper))(self._init_objects)
+        on_game_start_func = ctypes.CFUNCTYPE(None)(self._on_game_start)
+        on_next_round_func = ctypes.CFUNCTYPE(None, ctypes.c_bool)(self._on_next_round)
+        on_game_finished_func = ctypes.CFUNCTYPE(None)(self._on_game_finished)
+        lib.playerlib.playGame(bytes(self._game_file_path, 'utf-8'),
                            bytes(self._dealer_hostname, 'utf-8'),
                            bytes(self._dealer_port, 'utf-8'),
-                           init_objects_func,
-                           on_game_start_func,
-                           on_next_round_func,
-                           on_game_finished_func)
+                           init_objects_func, on_game_start_func, on_next_round_func, on_game_finished_func)
 
     def _set_next_action(self, action_type, raise_size):
         self._action_wrapper.contents.type = utils.action_type_enum_to_int(action_type)
