@@ -8,42 +8,102 @@ from client.data import ActionType, Game, MatchState
 
 
 class Agent(object):
+    """Base class for the agent.
+
+    Implement all abstract methods in this class to create your poker agent.
+    Pass instance of your implemented agent to Client to play.
+    """
     def __init__(self):
         super().__init__()
         self._client = None
+        self._possible_actions_wrapper = None
 
     def _setup(self, client, possible_actions_wrapper):
         self._client = client
         self._possible_actions_wrapper = possible_actions_wrapper
 
     def is_fold_valid(self):
+        """Returns if fold is a valid action in current round.
+        Returns:
+            bool: True if fold is valid, False otherwise.
+        """
         return self._possible_actions_wrapper.contents.foldValid
 
     def is_call_valid(self):
+        """Returns if call is a valid action in current round.
+        Returns:
+            bool: True if call is valid, False otherwise.
+        """
         return True
 
     def is_raise_valid(self):
+        """Returns if raise is a valid action in current round.
+        Returns:
+            bool: True if raise is valid, False otherwise.
+        """
         return self._possible_actions_wrapper.contents.raiseValid
 
     def get_raise_max(self):
+        """Returns maximal valid raise size.
+        Returns:
+            int: Maximal valid raise size if raise is valid or -1 otherwise.
+        """
         return self._possible_actions_wrapper.contents.raiseMax if self.is_raise_valid() else -1
 
     def get_raise_min(self):
+        """Returns minimal valid raise size.
+        Returns:
+            int: Minimal valid raise size if raise is valid or -1 otherwise.
+        """
         return self._possible_actions_wrapper.contents.raiseMin if self.is_raise_valid() else -1
 
     def set_next_action(self, action_type, raise_size=0):
+        """Set next agent's action.
+
+        Call this in on_next_round only when is_acting_player is set to True.
+
+        Args:
+            action_type (client.data.ActionType): Type of the action.
+            raise_size (int): Size of raise. Only used when action type is raise.
+        """
         self._client._set_next_action(action_type, raise_size)
 
     @abc.abstractmethod
     def on_game_start(self, game):
+        """Called before start of each game.
+
+        Note that one agent instance may be used to play multiple games.
+        This method will be called before each game that agent plays.
+
+        Args:
+            game (client.data.Game): Definition of the game. Definition is the same
+                                     for all games that one agent instance plays.
+        """
         pass
 
     @abc.abstractmethod
     def on_next_round(self, game, match_state, is_acting_player):
+        """Called on each player's turn.
+
+        This is called even on turns of other players when the agent is not acting.
+
+        If is_acting_player is set to True the agent must call set_next_action method.
+
+        Args:
+            game (client.data.Game): Definition of the game.
+            match_state (client.data.MatchState): Current state of the game.
+            is_acting_player (bool): True if player is acting, False otherwise.
+        """
         pass
 
     @abc.abstractmethod
     def on_game_finished(self, game, match_state):
+        """Called when game is finished.
+
+        Args:
+            game (client.data.Game): Definition of the game.
+            match_state (client.data.MatchState): Final state of the game.
+        """
         pass
 
 
