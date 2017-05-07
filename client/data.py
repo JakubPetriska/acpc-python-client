@@ -214,13 +214,24 @@ class State(_BaseDataObject):
         # TODO indexing
         return self._data_holder.action
 
-    def get_acting_player(self):
-        # TODO indexing
-        return self._data_holder.actingPlayer
+    def get_acting_player(self, round_index, action_index):
+        if round_index > self.get_round():
+            raise ValueError(
+                'Cannot retrieve acting player in round %s and action %s, game is in round %s'
+                % (round_index, action_index, self.get_round()))
+        if action_index >= self.get_num_actions(round_index):
+            raise ValueError(
+                'Cannot retrieve acting player in round %s and action %s, '
+                'there are only %s actions in round %s'
+                % (round_index, action_index, self.get_num_actions(round_index), self.get_round()))
+        return self._data_holder.actingPlayer[round_index][action_index]
 
-    def get_num_actions(self):
-        # TODO indexing
-        return self._data_holder.numActions
+    def get_num_actions(self, round_index):
+        if round_index > self.get_round():
+            raise ValueError(
+                'Cannot retrieve number of actions in round %s, game is in round %s'
+                % (round_index, self.get_round()))
+        return self._data_holder.numActions[round_index]
 
     def get_round(self):
         return self._data_holder.round
