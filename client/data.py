@@ -245,12 +245,24 @@ class State(_BaseDataObject):
 
 
 class MatchState(_BaseDataObject):
+    """State of the match as perceived by agent."""
+
     def __init__(self, wrapper, game):
         super().__init__(wrapper)
         self._state = State(wrapper.contents.state, game)
 
     def get_state(self):
+        """State of the game.
+
+        Returns:
+            MatchState: State of the game.
+        """
         return self._state
 
     def get_viewing_player(self):
+        """Return index of the player that is viewing this state.
+
+        Returns:
+            int: Index of the player that is viewing this state.
+        """
         return self._data_holder.viewingPlayer
