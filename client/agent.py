@@ -153,7 +153,7 @@ class Client(object):
         on_game_start_func = ctypes.CFUNCTYPE(None)(self._on_game_start)
         on_next_round_func = ctypes.CFUNCTYPE(None, ctypes.c_bool)(self._on_next_round)
         on_game_finished_func = ctypes.CFUNCTYPE(None)(self._on_game_finished)
-        lib.playerlib.playGame(bytes(self._game_file_path, 'utf-8'),
+        lib.player.playGame(bytes(self._game_file_path, 'utf-8'),
                            bytes(self._dealer_hostname, 'utf-8'),
                            bytes(self._dealer_port, 'utf-8'),
                            init_objects_func, on_game_start_func, on_next_round_func, on_game_finished_func)
