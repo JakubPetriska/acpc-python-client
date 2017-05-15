@@ -9,8 +9,6 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <getopt.h>
-#include "../acpc_infrastructure/game.h"
-#include "../acpc_infrastructure/net.h"
 
 #include "player.h"
 
