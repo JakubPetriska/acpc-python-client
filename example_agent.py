@@ -3,10 +3,6 @@ import sys
 
 import client as cl
 
-if len(sys.argv) < 3:
-    print("Usage {game_file_path} {dealer_hostname} {dealer_port}")
-    sys.exit(1)
-
 
 class RandomAgent(cl.Agent):
     def __init__(self):
@@ -55,6 +51,10 @@ class RandomAgent(cl.Agent):
     def on_game_finished(self, game, match_state):
         pass
 
+if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print("Usage {game_file_path} {dealer_hostname} {dealer_port}")
+        sys.exit(1)
 
-client = cl.Client(sys.argv[1], sys.argv[2], sys.argv[3])
-client.play(RandomAgent())
+    client = cl.Client(sys.argv[1], sys.argv[2], sys.argv[3])
+    client.play(RandomAgent())
