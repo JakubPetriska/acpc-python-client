@@ -1,6 +1,5 @@
 CC = gcc
 
-INCLUDES_PATH = ../acpc_infrastructure/
 LIB_NAME = player
 SOURCES = player.c
 EXTERNAL_SOURCES_NAMES = ./rng.c ./net.c ./game.c
