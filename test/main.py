@@ -1,9 +1,9 @@
 import unittest
 from unittest import TestSuite
 
-from test.structures_tests import GameTest
+from test.structures_tests import GameTest, ActionTest, PossibleActionsTest, MatchStateTest, StateTest
 
-test_classes = [GameTest]
+test_classes = [ActionTest, GameTest, StateTest, MatchStateTest, PossibleActionsTest]
 
 
 def load_tests(loader, tests, pattern):
