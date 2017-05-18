@@ -116,8 +116,8 @@ typedef struct {
 } State;
 
 typedef struct {
-  uint8_t viewingPlayer;
   State state;
+  uint8_t viewingPlayer;
 } MatchState;
 
 
