@@ -47,7 +47,7 @@ class StateWrapper(Structure):
         ('numActions', c_uint8 * MAX_ROUNDS),
         ('round', c_uint8),
         ('finished', c_uint8),
-        ('playerFolded', c_uint8 * MAX_ROUNDS),
+        ('playerFolded', c_uint8 * MAX_PLAYERS),
         ('boardCards', c_uint8 * MAX_BOARD_CARDS),
         ('holeCards', (c_uint8 * MAX_HOLE_CARDS) * MAX_PLAYERS)]
 
