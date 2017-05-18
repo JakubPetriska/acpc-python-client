@@ -76,7 +76,14 @@ class StateTest(unittest.TestCase):
         for i in range(MAX_PLAYERS):
             self.assertEqual(self.wrapper.spent[i], 18 + i)
 
-        # TODO add actions test
+        self.assertEqual(len(self.wrapper.action), MAX_ROUNDS)
+        for i in range(MAX_ROUNDS):
+            self.assertEqual(len(self.wrapper.action[i]), MAX_NUM_ACTIONS)
+            for j in range(MAX_NUM_ACTIONS):
+                self.assertEqual(self.wrapper.action[i][j].type,
+                                 (i * MAX_ROUNDS + j) % NUM_ACTION_TYPES)
+                self.assertEqual(self.wrapper.action[i][j].size,
+                                 1 + i * MAX_ROUNDS + j)
 
         self.assertEqual(len(self.wrapper.actingPlayer), MAX_ROUNDS)
         for i in range(MAX_ROUNDS):
@@ -100,21 +107,22 @@ class StateTest(unittest.TestCase):
         for i in range(MAX_BOARD_CARDS):
             self.assertEqual(self.wrapper.boardCards[i], 82 + i)
 
-        # TODO test length
-        # for i in range(MAX_PLAYERS):
-        #     for j in range(MAX_HOLE_CARDS):
-        #         self.assertEqual(self.wrapper.holeCards[i][j],
-        #                          2 + i * MAX_PLAYERS + j)
+        self.assertEqual(len(self.wrapper.holeCards), MAX_PLAYERS)
+        for i in range(MAX_PLAYERS):
+            self.assertEqual(len(self.wrapper.holeCards[i]), MAX_HOLE_CARDS)
+            for j in range(MAX_HOLE_CARDS):
+                self.assertEqual(self.wrapper.holeCards[i][j],
+                                 2 + i * MAX_PLAYERS + j)
 
 
 class MatchStateTest(unittest.TestCase):
     def setUp(self):
         self.wrapper = MatchStateWrapper()
 
-    # def test_wrapper(self):
-    #     lib.test_utils.fillTestMatchState(ctypes.pointer(self.wrapper))
-    #     self.assertEqual(self.wrapper.state.handId, 3)
-    #     self.assertEqual(self.wrapper.viewingPlayer, 5)
+    def test_wrapper(self):
+        lib.test_utils.fillTestMatchState(ctypes.pointer(self.wrapper))
+        self.assertEqual(self.wrapper.state.handId, 3)
+        self.assertEqual(self.wrapper.viewingPlayer, 5)
 
 
 class PossibleActionsTest(unittest.TestCase):

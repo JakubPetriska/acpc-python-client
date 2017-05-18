@@ -1,6 +1,5 @@
 #include "test_utils.h"
 
-#include <stdio.h>
 
 void fillTestAction(Action * action) {
   action->type = a_call;
@@ -34,6 +33,18 @@ void fillTestGame(Game * game) {
   }
 }
 
+enum ActionType indexToActionType(int index) {
+  if (index == 0) {
+    return a_fold;
+  } else if (index == 1) {
+    return a_call;
+  } else if (index == 2) {
+    return a_raise;
+  } else {
+    return a_invalid;
+  }
+}
+
 void fillTestState(State * state) {
   state->handId = 12;
   state->maxSpent = 8;
@@ -41,11 +52,13 @@ void fillTestState(State * state) {
   for (int i = 0; i < MAX_PLAYERS; ++i) {
     state->spent[i] = 18 + i;
   }
-
-  // TODO add Actions
-  fprintf(state->action[0][0].size);
-
-
+  for (int i = 0; i < MAX_ROUNDS; ++i) {
+    for (int j = 0; j < MAX_NUM_ACTIONS; ++j) {
+      state->action[i][j].type =
+        indexToActionType((i * MAX_ROUNDS + j) % NUM_ACTION_TYPES);
+      state->action[i][j].size = 1 + i * MAX_ROUNDS + j;
+    }
+  }
   for (int i = 0; i < MAX_ROUNDS; ++i) {
     for (int j = 0; j < MAX_NUM_ACTIONS; ++j) {
       state->actingPlayer[i][j] = 3 + i * MAX_ROUNDS + j;
@@ -62,11 +75,11 @@ void fillTestState(State * state) {
   for (int i = 0; i < MAX_BOARD_CARDS; ++i) {
     state->boardCards[i] = 82 + i;
   }
-  // for (int i = 0; i < MAX_PLAYERS; ++i) {
-  //   for (int j = 0; j < MAX_HOLE_CARDS; ++j) {
-  //     state->holeCards[i][j] = 2 + i * MAX_PLAYERS + j;
-  //   }
-  // }
+  for (int i = 0; i < MAX_PLAYERS; ++i) {
+    for (int j = 0; j < MAX_HOLE_CARDS; ++j) {
+      state->holeCards[i][j] = 2 + i * MAX_PLAYERS + j;
+    }
+  }
 }
 
 void fillTestMatchState(MatchState * matchState) {
