@@ -1,5 +1,7 @@
 #include "test_utils.h"
 
+#include <stdio.h>
+
 void fillTestAction(Action * action) {
   action->type = a_call;
   action->size = 32;
@@ -39,7 +41,11 @@ void fillTestState(State * state) {
   for (int i = 0; i < MAX_PLAYERS; ++i) {
     state->spent[i] = 18 + i;
   }
+
   // TODO add Actions
+  fprintf(state->action[0][0].size);
+
+
   for (int i = 0; i < MAX_ROUNDS; ++i) {
     for (int j = 0; j < MAX_NUM_ACTIONS; ++j) {
       state->actingPlayer[i][j] = 3 + i * MAX_ROUNDS + j;
