@@ -2,25 +2,24 @@ import ctypes as ctypes
 import unittest
 
 import acpc_agent_lib_test_utils as lib
-from client.data import Game
 from client.wrappers import *
 
 
-class ActionTest(unittest.TestCase):
+class ActionWrapperTest(unittest.TestCase):
     def setUp(self):
         self.wrapper = ActionWrapper()
 
-    def test_wrapper(self):
+    def test_values(self):
         lib.test_utils.fillTestAction(ctypes.pointer(self.wrapper))
         self.assertEqual(self.wrapper.type, a_call)
         self.assertEqual(self.wrapper.size, 32)
 
 
-class GameTest(unittest.TestCase):
+class GameWrapperTest(unittest.TestCase):
     def setUp(self):
         self.wrapper = GameWrapper()
 
-    def test_wrapper(self):
+    def test_values(self):
         lib.test_utils.fillTestGame(ctypes.pointer(self.wrapper))
         self.assertEqual(len(self.wrapper.stack), MAX_PLAYERS)
         for i in range(MAX_PLAYERS):
@@ -54,19 +53,12 @@ class GameTest(unittest.TestCase):
         for i in range(MAX_ROUNDS):
             self.assertEqual(self.wrapper.numBoardCards[i], 52 + i)
 
-    def test_data_object(self):
-        lib.test_utils.fillTestGame(ctypes.pointer(self.wrapper))
 
-        game = Game(self.wrapper)
-        self.assertEqual(game.get_num_players(), 10)
-        # TODO add more
-
-
-class StateTest(unittest.TestCase):
+class StateWrapperTest(unittest.TestCase):
     def setUp(self):
         self.wrapper = StateWrapper()
 
-    def test_wrapper(self):
+    def test_values(self):
         lib.test_utils.fillTestState(ctypes.pointer(self.wrapper))
         self.assertEqual(self.wrapper.handId, 12)
         self.assertEqual(self.wrapper.maxSpent, 8)
@@ -115,35 +107,35 @@ class StateTest(unittest.TestCase):
                                  2 + i * MAX_PLAYERS + j)
 
 
-class MatchStateTest(unittest.TestCase):
+class MatchStateWrapperTest(unittest.TestCase):
     def setUp(self):
         self.wrapper = MatchStateWrapper()
 
-    def test_wrapper(self):
+    def test_values(self):
         lib.test_utils.fillTestMatchState(ctypes.pointer(self.wrapper))
         self.assertEqual(self.wrapper.state.handId, 3)
         self.assertEqual(self.wrapper.viewingPlayer, 5)
 
 
-class PossibleActionsTest(unittest.TestCase):
+class PossibleActionsWrapperTest(unittest.TestCase):
     def setUp(self):
         self.wrapper = PossibleActionsWrapper()
 
-    def test_wrapper_1(self):
+    def test_values_1(self):
         lib.test_utils.fillTestPossibleActions1(ctypes.pointer(self.wrapper))
         self.assertEqual(self.wrapper.foldValid, True)
         self.assertEqual(self.wrapper.raiseValid, True)
         self.assertEqual(self.wrapper.raiseMin, 5)
         self.assertEqual(self.wrapper.raiseMax, 8)
 
-    def test_wrapper_2(self):
+    def test_values_2(self):
         lib.test_utils.fillTestPossibleActions2(ctypes.pointer(self.wrapper))
         self.assertEqual(self.wrapper.foldValid, False)
         self.assertEqual(self.wrapper.raiseValid, True)
         self.assertEqual(self.wrapper.raiseMin, 34)
         self.assertEqual(self.wrapper.raiseMax, -6)
 
-    def test_wrapper_3(self):
+    def test_values_3(self):
         lib.test_utils.fillTestPossibleActions3(ctypes.pointer(self.wrapper))
         self.assertEqual(self.wrapper.foldValid, True)
         self.assertEqual(self.wrapper.raiseValid, False)
@@ -151,6 +143,6 @@ class PossibleActionsTest(unittest.TestCase):
         self.assertEqual(self.wrapper.raiseMax, 1)
 
     def test_value_override(self):
-        self.test_wrapper_1()
-        self.test_wrapper_2()
-        self.test_wrapper_3()
+        self.test_values_1()
+        self.test_values_2()
+        self.test_values_3()
