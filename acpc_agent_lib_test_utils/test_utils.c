@@ -17,8 +17,8 @@ void fillTestGame(Game * game) {
     game->raiseSize[i] = 13 + i;
   }
   game->bettingType = noLimitBetting;
-  game->numPlayers = 10;
-  game->numRounds = 9;
+  game->numPlayers = 7;
+  game->numRounds = 2;
   for (int i = 0; i < MAX_ROUNDS; ++i) {
     game->firstPlayer[i] = 42 + i;
   }

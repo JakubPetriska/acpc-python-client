@@ -34,8 +34,8 @@ class GameWrapperTest(unittest.TestCase):
             self.assertEqual(self.wrapper.raiseSize[i], 13 + i)
 
         self.assertEqual(self.wrapper.bettingType, noLimitBetting)
-        self.assertEqual(self.wrapper.numPlayers, 10)
-        self.assertEqual(self.wrapper.numRounds, 9)
+        self.assertEqual(self.wrapper.numPlayers, 7)
+        self.assertEqual(self.wrapper.numRounds, 2)
 
         self.assertEqual(len(self.wrapper.firstPlayer), MAX_ROUNDS)
         for i in range(MAX_ROUNDS):

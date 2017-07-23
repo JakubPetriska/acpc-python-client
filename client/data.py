@@ -65,7 +65,7 @@ class Game(_BaseDataObject):
             raise ValueError(
                 'Cannot retrieve stack for player %s with %s players total'
                 % (player_index, self.get_num_players()))
-        return self._data_holder.blind
+        return self._data_holder.blind[player_index]
 
     def get_raise_size(self, round_index):
         """Returns the size of raise for limit games in given round.
