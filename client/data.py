@@ -236,10 +236,32 @@ class State(_BaseDataObject):
                 % (player_index, self._game.get_num_players()))
         return self._data_holder.spent[player_index]
 
-    def get_action(self):
-        # TODO indexing
-        # TODO doc
-        return self._data_holder.action
+    def get_action(self, round_index, action_index):
+        """Returns action taken in given round.
+
+        Args:
+            round_index (int): Index of the round.
+            action_index (int): Index of the action.
+
+        Returns:
+            int: Action object for given action in given round.
+
+        Raises:
+            ValueError: When round_index is greater or equal
+                        to number of rounds in the game so far.
+            ValueError: When action_index is greater or equal
+                        to number of actions in given round.
+        """
+        if round_index > self.get_round():
+            raise ValueError(
+                'Cannot retrieve action %s in round %s, game is in round %s'
+                % (action_index, round_index, self.get_round()))
+        if action_index >= self.get_num_actions(round_index):
+            raise ValueError(
+                'Cannot retrieve action %s in round %s, '
+                'there are only %s actions in round %s'
+                % (action_index, round_index, self.get_num_actions(round_index), self.get_round()))
+        return self._data_holder.action[round_index][action_index]
 
     def get_acting_player(self, round_index, action_index):
         """Returns index of the acting player for given action in given round.
