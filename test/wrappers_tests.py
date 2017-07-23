@@ -114,6 +114,7 @@ class MatchStateWrapperTest(unittest.TestCase):
     def test_values(self):
         lib.test_utils.fillTestMatchState(ctypes.pointer(self.wrapper))
         self.assertEqual(self.wrapper.state.handId, 3)
+        self.assertEqual(self.wrapper.state.round, 4)
         self.assertEqual(self.wrapper.viewingPlayer, 5)
 
 

@@ -84,6 +84,7 @@ void fillTestState(State * state) {
 
 void fillTestMatchState(MatchState * matchState) {
   matchState->state.handId = 3;
+  matchState->state.round = 4;
   matchState->viewingPlayer = 5;
 }
 

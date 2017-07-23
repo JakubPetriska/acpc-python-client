@@ -1,7 +1,10 @@
 import unittest
 from unittest import TestSuite
 
-from test.data_tests import GameTest
+from test.data_tests import (
+    GameTest,
+    MatchStateTest
+)
 from test.wrappers_tests import (
     GameWrapperTest,
     ActionWrapperTest,
@@ -16,7 +19,8 @@ test_classes = [
     StateWrapperTest,
     MatchStateWrapperTest,
     PossibleActionsWrapperTest,
-    GameTest
+    GameTest,
+    MatchStateTest
 ]
 
 

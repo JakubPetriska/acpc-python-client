@@ -2,8 +2,8 @@ import ctypes
 import unittest
 
 import acpc_agent_lib_test_utils as lib
-from client.data import Game, BettingType
-from client.wrappers import GameWrapper
+from client.data import Game, BettingType, MatchState
+from client.wrappers import GameWrapper, MatchStateWrapper
 from client.wrappers import (
     MAX_ROUNDS,
     MAX_PLAYERS,
@@ -67,3 +67,16 @@ class GameTest(unittest.TestCase):
         for i in range(NUM_ROUNDS, MAX_ROUNDS):
             with self.assertRaises(ValueError):
                 self.game.get_num_board_cards(i)
+
+
+class MatchStateTest(unittest.TestCase):
+    def setUp(self):
+        game_wrapper = GameWrapper()
+        lib.test_utils.fillTestGame(ctypes.pointer(game_wrapper))
+        wrapper = MatchStateWrapper()
+        lib.test_utils.fillTestMatchState(ctypes.pointer(wrapper))
+        self.match_state = MatchState(wrapper, Game(game_wrapper))
+
+    def test_values(self):
+        self.assertEqual(self.match_state.get_state().get_round(), 4)
+        self.assertEqual(self.match_state.get_viewing_player(), 5)
