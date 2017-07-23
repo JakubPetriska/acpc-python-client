@@ -52,7 +52,7 @@ class RandomAgent(cl.Agent):
         pass
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 4:
         print("Usage {game_file_path} {dealer_hostname} {dealer_port}")
         sys.exit(1)
 
