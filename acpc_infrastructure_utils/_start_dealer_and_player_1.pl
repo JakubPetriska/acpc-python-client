@@ -10,7 +10,7 @@ chomp $hostname;
 $#hostent >= 4 or die "could not look up $hostname";
 $hostip = inet_ntoa( $hostent[ 4 ] );
 
-$#ARGV >= 3 or die "usage: play_match.pl matchName gameDefFile #Hands rngSeed player1name player1exe player2name player2exe ... [options]";
+$#ARGV >= 3 or die "usage: _start_dealer_and_player_1.pl matchName gameDefFile #Hands rngSeed player1name player1exe ... [options]";
 
 $numPlayers = -1;
 open FILE, '<', $ARGV[ 1 ] or die "couldn't open game definition $ARGV[ 1 ]";
