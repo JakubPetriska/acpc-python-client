@@ -336,10 +336,25 @@ class State(_BaseDataObject):
                 % (player_index, self._game.get_num_players()))
         return self._data_holder.playerFolded[player_index] != 0
 
-    def get_board_card(self,):
-        # TODO indexing
-        # TODO doc
-        return self._data_holder.boardCards
+    def get_board_card(self, card_index):
+        """Returns board card.
+
+        Args:
+            card_index (int): Index of the board card.
+
+        Returns:
+            Board card on given index.
+
+        Raises:
+            ValueError: When card_index is greater or equal
+                        to number of board cards in current
+                        round.
+        """
+        if card_index >= self._game.get_num_board_cards(self.get_round()):
+            raise ValueError(
+                'Cannot retrieve board car %s, there are only %s board cars in round %s'
+                % (card_index, self._game.get_num_board_cards(self.get_round()), self.get_round()))
+        return self._data_holder.boardCards[card_index]
 
     def get_hole_cards(self):
         # TODO indexing
