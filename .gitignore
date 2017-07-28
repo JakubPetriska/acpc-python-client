@@ -65,6 +65,7 @@ fabric.properties
 .pyc
 */*.pyc
 */__pycache__
+build
 
 # C/C++
 .o
