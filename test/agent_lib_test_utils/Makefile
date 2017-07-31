@@ -2,9 +2,9 @@ CC = gcc
 
 LIB_NAME = testutils
 SOURCES = test_utils.c
-EXTERNAL_SOURCES_NAMES = ./rng.c ./net.c ./game.c
+EXTERNAL_SOURCES_NAMES = rng.c net.c game.c
 EXTERNAL_SOURCES_DIR = ../../acpc_infrastructure/
-EXTERNAL_SOURCES = $(subst ./, $(EXTERNAL_SOURCES_DIR), $(EXTERNAL_SOURCES_NAMES))
+EXTERNAL_SOURCES = $(addprefix $(EXTERNAL_SOURCES_DIR), $(EXTERNAL_SOURCES_NAMES))
 
 OBJECTS = $(SOURCES:.c=.o)
 EXTERNAL_OBJECTS = $(EXTERNAL_SOURCES_NAMES:.c=.o)
