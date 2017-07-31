@@ -1,13 +1,13 @@
 import random
 import sys
 
-import acpc_python_client as cl
+import acpc_python_client as acpc
 
 
-class RandomAgent(cl.Agent):
+class RandomAgent(acpc.Agent):
     def __init__(self):
         super().__init__()
-        self.actions = [cl.ActionType.FOLD, cl.ActionType.CALL, cl.ActionType.RAISE]
+        self.actions = [acpc.ActionType.FOLD, acpc.ActionType.CALL, acpc.ActionType.RAISE]
         self.action_probabilities = [0] * 3
         self.action_probabilities[0] = 0.06  # fold probability
         self.action_probabilities[1] = (1 - self.action_probabilities[0]) * 0.5  # call probability
@@ -40,7 +40,7 @@ class RandomAgent(cl.Agent):
                 else:
                     r -= current_probabilities[i]
             action_type = self.actions[action_index]
-            if action_type == cl.ActionType.RAISE:
+            if action_type == acpc.ActionType.RAISE:
                 raise_min = self.get_raise_min()
                 raise_max = self.get_raise_max()
                 raise_size = raise_min + (raise_max - raise_min) * random.random()
@@ -56,5 +56,5 @@ if __name__ == "__main__":
         print("Usage {game_file_path} {dealer_hostname} {dealer_port}")
         sys.exit(1)
 
-    client = cl.Client(sys.argv[1], sys.argv[2], sys.argv[3])
+    client = acpc.Client(sys.argv[1], sys.argv[2], sys.argv[3])
     client.play(RandomAgent())
