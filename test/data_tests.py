@@ -1,17 +1,14 @@
 import ctypes
 import unittest
 
-import acpc_agent_lib_test_utils as lib
-from client.data import Game, BettingType, MatchState
-from client.wrappers import GameWrapper, MatchStateWrapper
-from client.wrappers import (
+from acpc_python_client.data import Game, BettingType, MatchState
+from acpc_python_client.wrappers import GameWrapper, MatchStateWrapper
+from acpc_python_client.wrappers import (
     MAX_ROUNDS,
-    MAX_PLAYERS,
-    MAX_BOARD_CARDS,
-    MAX_HOLE_CARDS,
-    MAX_NUM_ACTIONS,
-    NUM_ACTION_TYPES
+    MAX_PLAYERS
 )
+
+from test import agent_lib_test_utils as lib
 
 NUM_PLAYERS = 7
 NUM_ROUNDS = 2

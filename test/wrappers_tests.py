@@ -1,8 +1,9 @@
 import ctypes as ctypes
 import unittest
 
-import acpc_agent_lib_test_utils as lib
-from client.wrappers import *
+from acpc_python_client.wrappers import *
+
+from test import agent_lib_test_utils as lib
 
 
 class ActionWrapperTest(unittest.TestCase):

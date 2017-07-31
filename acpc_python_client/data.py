@@ -1,6 +1,6 @@
 from enum import Enum
 
-from client import utils
+from acpc_python_client import utils
 
 
 class BettingType(Enum):

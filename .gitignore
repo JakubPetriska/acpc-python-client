@@ -63,12 +63,10 @@ fabric.properties
 
 # Python
 .pyc
-*/*.pyc
-*/__pycache__
+**/*.pyc
+**/__pycache__
 build
 
 # C/C++
-.o
-*/*.o
-.so
-*/*.so
+**/*.o
+**/*.so

@@ -1,8 +1,8 @@
 #ifndef TEST_UTILS_H
 #define TEST_UTILS_H
 
-#include "../acpc_infrastructure/game.h"
-#include "../acpc_agent_lib/player.h"
+#include "../../acpc_infrastructure/game.h"
+#include "../../acpc_python_client/agent_lib/player.h"
 
 
 void fillTestAction(Action * action);

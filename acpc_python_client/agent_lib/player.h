@@ -4,8 +4,8 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
-#include "../acpc_infrastructure/game.h"
-#include "../acpc_infrastructure/net.h"
+#include "../../acpc_infrastructure/game.h"
+#include "../../acpc_infrastructure/net.h"
 
 /*
 Tells the client what actions are possible.

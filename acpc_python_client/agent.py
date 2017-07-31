@@ -1,10 +1,11 @@
 import abc
 import ctypes as ctypes
 
-import client.wrappers as wrappers
-import acpc_agent_lib as lib
-from client import utils
-from client.data import ActionType, Game, MatchState
+import acpc_python_client.wrappers as wrappers
+from acpc_python_client import utils
+from acpc_python_client.data import ActionType, Game, MatchState
+
+import acpc_python_client.agent_lib as lib
 
 
 class Agent(object):

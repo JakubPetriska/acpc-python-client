@@ -1,7 +1,7 @@
 import random
 import sys
 
-import client as cl
+import acpc_python_client as cl
 
 
 class RandomAgent(cl.Agent):
