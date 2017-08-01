@@ -195,8 +195,9 @@ class Game(_BaseDataObject):
 class State(_BaseDataObject):
     """State of the game."""
 
-    def __init__(self, wrapper, game):
+    def __init__(self, wrapper, match_state, game):
         super().__init__(wrapper)
+        self._match_state = match_state
         self._game = game
 
     def get_max_spent(self):
@@ -352,14 +353,28 @@ class State(_BaseDataObject):
         """
         if card_index >= self._game.get_num_board_cards(self.get_round()):
             raise ValueError(
-                'Cannot retrieve board car %s, there are only %s board cars in round %s'
+                'Cannot retrieve board card %s, there are only %s board cards in round %s'
                 % (card_index, self._game.get_num_board_cards(self.get_round()), self.get_round()))
         return self._data_holder.boardCards[card_index]
 
-    def get_hole_cards(self):
-        # TODO indexing
-        # TODO doc
-        return self._data_holder.holeCards
+    def get_hole_card(self, card_index):
+        """Returns player's hole card
+
+        Args:
+            card_index (int): Index of the hole card.
+
+        Returns:
+            Hole card on given index.
+
+        Raises:
+            ValueError: When card_index is greater or equal
+                        to number of hole cards in the game.
+        """
+        if card_index >= self._game.get_num_hole_cards():
+            raise ValueError(
+                'Cannot retrieve hole card %s, there are only %s hole cards'
+                % (card_index, self._game.get_num_hole_cards()))
+        return self._data_holder.holeCards[card_index][self._match_state.get_viewing_player()]
 
 
 class MatchState(_BaseDataObject):
@@ -367,7 +382,7 @@ class MatchState(_BaseDataObject):
 
     def __init__(self, wrapper, game):
         super().__init__(wrapper)
-        self._state = State(self._data_holder.state, game)
+        self._state = State(self._data_holder.state, self, game)
 
     def get_state(self):
         """State of the game.
