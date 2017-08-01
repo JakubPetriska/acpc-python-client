@@ -183,4 +183,4 @@ class State(BaseDataObject):
             raise ValueError(
                 'Cannot retrieve hole card %s, there are only %s hole cards'
                 % (card_index, self._game.get_num_hole_cards()))
-        return self._data_holder.holeCards[card_index][self._match_state.get_viewing_player()]
+        return self._data_holder.holeCards[self._match_state.get_viewing_player()][card_index]

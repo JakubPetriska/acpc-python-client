@@ -48,11 +48,11 @@ class GameWrapperTest(unittest.TestCase):
 
         self.assertEqual(self.wrapper.numSuits, 2)
         self.assertEqual(self.wrapper.numRanks, 25)
-        self.assertEqual(self.wrapper.numHoleCards, 49)
+        self.assertEqual(self.wrapper.numHoleCards, 2)
 
         self.assertEqual(len(self.wrapper.numBoardCards), MAX_ROUNDS)
         for i in range(MAX_ROUNDS):
-            self.assertEqual(self.wrapper.numBoardCards[i], 52 + i)
+            self.assertEqual(self.wrapper.numBoardCards[i], i)
 
 
 class StateWrapperTest(unittest.TestCase):
@@ -89,7 +89,7 @@ class StateWrapperTest(unittest.TestCase):
         for i in range(MAX_ROUNDS):
             self.assertEqual(self.wrapper.numActions[i], 7 + i)
 
-        self.assertEqual(self.wrapper.round, 8)
+        self.assertEqual(self.wrapper.round, 1)
         self.assertEqual(self.wrapper.finished, 11)
 
         self.assertEqual(len(self.wrapper.playerFolded), MAX_PLAYERS)

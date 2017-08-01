@@ -27,9 +27,9 @@ void fillTestGame(Game * game) {
   }
   game->numSuits = 2;
   game->numRanks = 25;
-  game->numHoleCards = 49;
+  game->numHoleCards = 2;
   for (int i = 0; i < MAX_ROUNDS; ++i) {
-    game->numBoardCards[i] = 52 + i;
+    game->numBoardCards[i] = i;
   }
 }
 
@@ -45,7 +45,9 @@ enum ActionType indexToActionType(int index) {
   }
 }
 
-void fillTestState(State * state) {
+void fillTestState(MatchState * matchState) {
+  matchState->viewingPlayer = 1;
+  State * state = &matchState->state;
   state->handId = 12;
   state->maxSpent = 8;
   state->minNoLimitRaiseTo = 22;
@@ -67,7 +69,7 @@ void fillTestState(State * state) {
   for (int i = 0; i < MAX_ROUNDS; ++i) {
     state->numActions[i] = 7 + i;
   }
-  state->round = 8;
+  state->round = 1;
   state->finished = 11;
   for (int i = 0; i < MAX_PLAYERS; ++i) {
     state->playerFolded[i] = 33 + i;

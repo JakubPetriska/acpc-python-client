@@ -9,7 +9,7 @@ void fillTestAction(Action * action);
 
 void fillTestGame(Game * game);
 
-void fillTestState(State * state);
+void fillTestState(MatchState * matchState);
 
 void fillTestMatchState(MatchState * matchState);
 
