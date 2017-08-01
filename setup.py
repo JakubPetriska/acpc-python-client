@@ -30,7 +30,11 @@ class CustomClean(clean):
 setup(name='acpc_python_client',
       version='1.0',
       author='Jakub Petriska',
-      packages=['acpc_python_client', 'acpc_python_client.agent_lib'],
+      packages=[
+          'acpc_python_client',
+          'acpc_python_client.agent_lib',
+          'acpc_python_client.data'
+      ],
       package_dir={'acpc_python_client.agent_lib': 'acpc_python_client/agent_lib'},
       package_data={
           'acpc_python_client.agent_lib': ['libplayer.so']

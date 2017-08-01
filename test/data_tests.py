@@ -1,7 +1,9 @@
 import ctypes
 import unittest
 
-from acpc_python_client.data import Game, BettingType, MatchState
+from acpc_python_client.data.betting_type import BettingType
+from acpc_python_client.data.game import Game
+from acpc_python_client.data.match_state import MatchState
 from acpc_python_client.wrappers import GameWrapper, MatchStateWrapper
 from acpc_python_client.wrappers import (
     MAX_ROUNDS,

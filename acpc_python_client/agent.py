@@ -1,11 +1,12 @@
 import abc
 import ctypes as ctypes
 
+import acpc_python_client.agent_lib as lib
 import acpc_python_client.wrappers as wrappers
 from acpc_python_client import utils
-from acpc_python_client.data import ActionType, Game, MatchState
-
-import acpc_python_client.agent_lib as lib
+from acpc_python_client.data.action_type import ActionType
+from acpc_python_client.data.game import Game
+from acpc_python_client.data.match_state import MatchState
 
 
 class Agent(object):
@@ -14,6 +15,7 @@ class Agent(object):
     Implement all abstract methods in this class to create your poker agent.
     Pass instance of your implemented agent to Client to play.
     """
+
     def __init__(self):
         super().__init__()
         self._client = None
@@ -155,9 +157,9 @@ class Client(object):
         on_next_round_func = ctypes.CFUNCTYPE(None, ctypes.c_bool)(self._on_next_round)
         on_game_finished_func = ctypes.CFUNCTYPE(None)(self._on_game_finished)
         lib.player.playGame(bytes(self._game_file_path, 'utf-8'),
-                           bytes(self._dealer_hostname, 'utf-8'),
-                           bytes(self._dealer_port, 'utf-8'),
-                           init_objects_func, on_game_start_func, on_next_round_func, on_game_finished_func)
+                            bytes(self._dealer_hostname, 'utf-8'),
+                            bytes(self._dealer_port, 'utf-8'),
+                            init_objects_func, on_game_start_func, on_next_round_func, on_game_finished_func)
 
     def _set_next_action(self, action_type, raise_size):
         self._action_wrapper.contents.type = utils.action_type_enum_to_int(action_type)

@@ -2,7 +2,8 @@ import json
 import sys
 
 from acpc_python_client import wrappers
-from acpc_python_client.data import ActionType, BettingType
+from acpc_python_client.data.action_type import ActionType
+from acpc_python_client.data.betting_type import BettingType
 
 _NUMBERS = (int, float)
 
