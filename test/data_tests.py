@@ -145,12 +145,11 @@ class StateTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.state.get_player_folded(i)
 
-        # TODO test get_board_card, need to add board cards sum for round
-        # for i in range(CURRENT_ROUND + 1):
-        #     self.assertEqual(self.state.get_board_card(i), 82 + i)
-        # for i in range(CURRENT_ROUND + 1, MAX_BOARD_CARDS):
-        #     with self.assertRaises(ValueError):
-        #         self.state.get_board_card(i)
+        for i in range(3):
+            self.assertEqual(self.state.get_board_card(i), 82 + i)
+        for i in range(3, MAX_BOARD_CARDS):
+            with self.assertRaises(ValueError):
+                self.state.get_board_card(i)
 
         for i in range(NUM_HOLE_CARDS):
             self.assertEqual(self.state.get_hole_card(i), 2 + 1 * MAX_PLAYERS + i)

@@ -192,7 +192,7 @@ class State(BaseDataObject):
                         to number of board cards in current
                         round.
         """
-        if card_index >= self._game.get_num_board_cards(self.get_round()):
+        if card_index >= self._game.get_total_num_board_cards(self.get_round()):
             raise ValueError(
                 'Cannot retrieve board card %s, there are only %s board cards in round %s'
                 % (card_index, self._game.get_num_board_cards(self.get_round()), self.get_round()))
