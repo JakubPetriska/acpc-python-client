@@ -99,7 +99,14 @@ class StateTest(unittest.TestCase):
         #     with self.assertRaises(ValueError):
         #         self.state.get_action(i)
 
-        # TODO test get_acting_player
+        for i in range(CURRENT_ROUND + 1):
+            for j in range(7 + i):
+                self.assertEqual(self.state.get_acting_player(i, j),
+                                 3 + i * MAX_ROUNDS + j)
+        for i in range(CURRENT_ROUND + 1, MAX_ROUNDS):
+            for j in range(7 + i):
+                with self.assertRaises(ValueError):
+                    self.state.get_acting_player(i, j)
 
         for i in range(CURRENT_ROUND + 1):
             self.assertEqual(self.state.get_num_actions(i), 7 + i)
