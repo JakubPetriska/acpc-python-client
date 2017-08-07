@@ -60,6 +60,17 @@ def action_type_enum_to_int(action_type):
         raise ValueError('Unknown action type')
 
 
+def action_type_int_to_enum(action_type_int):
+    if action_type_int == wrappers.a_fold:
+        return ActionType.FOLD
+    elif action_type_int == wrappers.a_call:
+        return ActionType.CALL
+    elif action_type_int == wrappers.a_raise:
+        return ActionType.RAISE
+    else:
+        raise ValueError('Unknown action type')
+
+
 def betting_type_int_to_enum(betting_type):
     if betting_type == wrappers.limitBetting:
         return BettingType.LIMIT

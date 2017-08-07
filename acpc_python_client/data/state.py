@@ -1,4 +1,5 @@
 from acpc_python_client.data.base_data_object import BaseDataObject
+from acpc_python_client.utils import action_type_int_to_enum
 
 
 class State(BaseDataObject):
@@ -46,15 +47,15 @@ class State(BaseDataObject):
                 % (player_index, self._game.get_num_players()))
         return self._data_holder.spent[player_index]
 
-    def get_action(self, round_index, action_index):
-        """Returns action taken in given round.
+    def get_action_type(self, round_index, action_index):
+        """Returns type of action on given index taken in given round.
 
         Args:
             round_index (int): Index of the round.
             action_index (int): Index of the action.
 
         Returns:
-            int: Action object for given action in given round.
+            ActionType: Action type for given action in given round.
 
         Raises:
             ValueError: When round_index is greater or equal
@@ -71,7 +72,38 @@ class State(BaseDataObject):
                 'Cannot retrieve action %s in round %s, '
                 'there are only %s actions in round %s'
                 % (action_index, round_index, self.get_num_actions(round_index), self.get_round()))
-        return self._data_holder.action[round_index][action_index]
+        action_type_int = self._data_holder.action[round_index][action_index].type
+        return action_type_int_to_enum(action_type_int)
+
+    def get_action_size(self, round_index, action_index):
+        """Returns size action on given index taken in given round.
+
+        Note that the size is relevant only when corresponding action
+        is ActionType.RAISE.
+
+        Args:
+            round_index (int): Index of the round.
+            action_index (int): Index of the action.
+
+        Returns:
+            int: Size of given raise action in given round.
+
+        Raises:
+            ValueError: When round_index is greater or equal
+                        to number of rounds in the game so far.
+            ValueError: When action_index is greater or equal
+                        to number of actions in given round.
+        """
+        if round_index > self.get_round():
+            raise ValueError(
+                'Cannot retrieve action %s in round %s, game is in round %s'
+                % (action_index, round_index, self.get_round()))
+        if action_index >= self.get_num_actions(round_index):
+            raise ValueError(
+                'Cannot retrieve action %s in round %s, '
+                'there are only %s actions in round %s'
+                % (action_index, round_index, self.get_num_actions(round_index), self.get_round()))
+        return self._data_holder.action[round_index][action_index].size
 
     def get_acting_player(self, round_index, action_index):
         """Returns index of the acting player for given action in given round.

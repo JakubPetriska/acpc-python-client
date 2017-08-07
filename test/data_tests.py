@@ -1,6 +1,8 @@
 import ctypes
 import unittest
 
+from acpc_python_client.data.action_type import ActionType
+
 from acpc_python_client.data.betting_type import BettingType
 from acpc_python_client.data.game import Game
 from acpc_python_client.data.match_state import MatchState
@@ -10,7 +12,8 @@ from acpc_python_client.wrappers import (
     MAX_PLAYERS,
     MAX_BOARD_CARDS,
     MAX_HOLE_CARDS,
-    MAX_NUM_ACTIONS
+    MAX_NUM_ACTIONS,
+    NUM_ACTION_TYPES
 )
 from test import agent_lib_test_utils as lib
 
@@ -91,13 +94,26 @@ class StateTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.state.get_spent(i)
 
-        # TODO test get_action
-        # for i in range(NUM_PLAYERS):
-        #     for j in range(NUM_PLAYERS):
-        #     self.assertEqual(self.state.get_action(i), 18 + i)
-        # for i in range(NUM_PLAYERS, MAX_PLAYERS):
-        #     with self.assertRaises(ValueError):
-        #         self.state.get_action(i)
+        for i in range(CURRENT_ROUND + 1):
+            for j in range(7 + i):
+                obtained_action_type = self.state.get_action_type(i, j)
+                expected_action_type = None
+                expected_action_type_int = (i * MAX_ROUNDS + j) % NUM_ACTION_TYPES
+                if expected_action_type_int == 0:
+                    expected_action_type = ActionType.FOLD
+                elif expected_action_type_int == 1:
+                    expected_action_type = ActionType.CALL
+                elif expected_action_type_int == 2:
+                    expected_action_type = ActionType.RAISE
+                self.assertEqual(obtained_action_type, expected_action_type)
+                self.assertEqual(self.state.get_action_size(i, j),
+                                 1 + i * MAX_ROUNDS + j)
+        for i in range(CURRENT_ROUND + 1, MAX_ROUNDS):
+            for j in range(7 + i):
+                with self.assertRaises(ValueError):
+                    self.state.get_action_type(i, j)
+                with self.assertRaises(ValueError):
+                    self.state.get_action_size(i, j)
 
         for i in range(CURRENT_ROUND + 1):
             for j in range(7 + i):
