@@ -52,7 +52,7 @@ class GameWrapperTest(unittest.TestCase):
 
         self.assertEqual(len(self.wrapper.numBoardCards), MAX_ROUNDS)
         for i in range(MAX_ROUNDS):
-            self.assertEqual(self.wrapper.numBoardCards[i], i)
+            self.assertEqual(self.wrapper.numBoardCards[i], i + 1)
 
 
 class StateWrapperTest(unittest.TestCase):

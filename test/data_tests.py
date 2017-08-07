@@ -26,8 +26,8 @@ NUM_HOLE_CARDS = 2
 class GameTest(unittest.TestCase):
     def setUp(self):
         wrapper = GameWrapper()
-        self.game = Game(wrapper)
         lib.test_utils.fillTestGame(ctypes.pointer(wrapper))
+        self.game = Game(wrapper)
 
     def test_values(self):
         for i in range(NUM_PLAYERS):
@@ -69,7 +69,14 @@ class GameTest(unittest.TestCase):
         self.assertEqual(self.game.get_num_hole_cards(), 2)
 
         for i in range(NUM_ROUNDS):
-            self.assertEqual(self.game.get_num_board_cards(i), i)
+            self.assertEqual(self.game.get_num_board_cards(i), i + 1)
+        for i in range(NUM_ROUNDS, MAX_ROUNDS):
+            with self.assertRaises(ValueError):
+                self.game.get_num_board_cards(i)
+
+        total_num_board_cards = [1, 3]
+        for i in range(NUM_ROUNDS):
+            self.assertEqual(self.game.get_total_num_board_cards(i), total_num_board_cards[i])
         for i in range(NUM_ROUNDS, MAX_ROUNDS):
             with self.assertRaises(ValueError):
                 self.game.get_num_board_cards(i)

@@ -7,6 +7,10 @@ class Game(BaseDataObject):
 
     def __init__(self, wrapper):
         super().__init__(wrapper)
+        self.board_card_counts = [self.get_num_board_cards(round_index)
+                                  for round_index in range(self.get_num_rounds())]
+        for i in range(1, self.get_num_rounds()):
+            self.board_card_counts[i] = self.board_card_counts[i - 1] + self.board_card_counts[i]
 
     def get_stack(self, player_index):
         """Returns stack size of player.
@@ -169,3 +173,22 @@ class Game(BaseDataObject):
                 'Cannot retrieve number of board cards in round %s in game with %s rounds'
                 % (round_index, self.get_num_rounds()))
         return self._data_holder.numBoardCards[round_index]
+
+    def get_total_num_board_cards(self, round_index):
+        """Returns total number of board cards that are on the board in given round.
+
+        Args:
+            round_index (int): Index of the round
+
+        Returns:
+            int: Total number of board cards that are on the board in given round.
+
+        Raises:
+            ValueError: When round_index is greater or equal
+                        to number of rounds in the game.
+        """
+        if round_index >= self.get_num_rounds():
+            raise ValueError(
+                'Cannot retrieve number of board cards in round %s in game with %s rounds'
+                % (round_index, self.get_num_rounds()))
+        return self.board_card_counts[round_index]

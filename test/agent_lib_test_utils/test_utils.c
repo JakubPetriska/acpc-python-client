@@ -29,7 +29,7 @@ void fillTestGame(Game * game) {
   game->numRanks = 25;
   game->numHoleCards = 2;
   for (int i = 0; i < MAX_ROUNDS; ++i) {
-    game->numBoardCards[i] = i;
+    game->numBoardCards[i] = i + 1;
   }
 }
 
