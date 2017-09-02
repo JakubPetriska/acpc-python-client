@@ -18,6 +18,8 @@ typedef struct
     int32_t raiseMin, raiseMax;
 } PossibleActions;
 
+Game readGameFile(char const *gameFilePath);
+
 int playGame(char const *gameFilePath,
              char *dealerHostname,
              char const *dealerPort,

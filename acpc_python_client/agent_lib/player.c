@@ -12,6 +12,29 @@
 
 #include "player.h"
 
+Game readGameFile(char const *gameFilePath) {
+  Game *game;
+  FILE *file;
+
+  file = fopen(gameFilePath, "r");
+  if (file == NULL)
+  {
+
+    fprintf(stderr, "ERROR: could not open game %s\n", gameFilePath);
+    exit(EXIT_FAILURE);
+  }
+  game = readGame(file);
+  if (game == NULL)
+  {
+
+    fprintf(stderr, "ERROR: could not read game %s\n", gameFilePath);
+    exit(EXIT_FAILURE);
+  }
+  fclose(file);
+
+  return *game;
+}
+
 int playGame(char const *gameFilePath, char *dealerHostname,
              char const *dealerPort,
              void (*initObjects)(Game *, MatchState *, PossibleActions *, Action *),
