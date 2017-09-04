@@ -9,7 +9,7 @@ class RandomAgent(acpc.Agent):
         super().__init__()
         self.actions = [acpc.ActionType.FOLD, acpc.ActionType.CALL, acpc.ActionType.RAISE]
         self.action_probabilities = [0] * 3
-        self.action_probabilities[0] = 0.06  # fold probability
+        self.action_probabilities[0] = 0.3  # fold probability
         self.action_probabilities[1] = (1 - self.action_probabilities[0]) * 0.5  # call probability
         self.action_probabilities[2] = (1 - self.action_probabilities[0]) * 0.5  # raise probability
 
@@ -40,7 +40,8 @@ class RandomAgent(acpc.Agent):
                 else:
                     r -= current_probabilities[i]
             action_type = self.actions[action_index]
-            if action_type == acpc.ActionType.RAISE:
+            if action_type == acpc.ActionType.RAISE \
+                    and game.get_betting_type() == acpc.BettingType.NO_LIMIT:
                 raise_min = self.get_raise_min()
                 raise_max = self.get_raise_max()
                 raise_size = raise_min + (raise_max - raise_min) * random.random()

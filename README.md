@@ -28,8 +28,11 @@ This will install package `acpc_python_client` into your python distribution.
 
 
 ## Sample code
-The `example_agent.py` in the root of this repository contains simple random
-agent for Heads-Up Limit Hold'em written using the wrapper.
+The `random_agent.py` in the root of this repository contains simple random
+agent written using the wrapper which can be used for any poker game
+supported by ACPC infrastructure. The accompanying file `random_agent.limit.2.sh`
+is an example of agent launching script for Heads-Up Limit Hold'em which is passed
+to dealer. 
 
 
 ## Agent testing
