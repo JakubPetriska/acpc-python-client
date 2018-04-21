@@ -20,6 +20,8 @@ typedef struct
 
 Game readGameFile(char const *gameFilePath);
 
+State parseState(char const *gameFilePath, char const *stateString);
+
 int playGame(char const *gameFilePath,
              char *dealerHostname,
              char const *dealerPort,

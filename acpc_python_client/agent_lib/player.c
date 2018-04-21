@@ -35,6 +35,13 @@ Game readGameFile(char const *gameFilePath) {
   return *game;
 }
 
+State parseState(char const *gameFilePath, const char *stateString) {
+  Game game = readGameFile(gameFilePath);
+  State state;
+  readState(stateString, &game, &state);
+  return state;
+}
+
 int playGame(char const *gameFilePath, char *dealerHostname,
              char const *dealerPort,
              void (*initObjects)(Game *, MatchState *, PossibleActions *, Action *),

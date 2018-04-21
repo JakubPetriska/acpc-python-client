@@ -1,6 +1,7 @@
 import acpc_python_client.agent_lib as lib
 import acpc_python_client.wrappers as wrappers
 from acpc_python_client.data.game import Game
+from acpc_python_client.data.state import State
 
 
 _MAX_SUITS = 4
@@ -45,3 +46,11 @@ def read_game_file(path):
     lib.player.readGameFile.restype = wrappers.GameWrapper
     game_wrapper = lib.player.readGameFile(bytes(path, 'utf-8'))
     return Game(game_wrapper)
+
+
+def parse_state(game_file_path, state_string):
+    lib.player.parseState.restype = wrappers.StateWrapper
+    state_wrapper = lib.player.parseState(
+        bytes(game_file_path, 'utf-8'),
+        bytes(state_string, 'utf-8'))
+    return State(state_wrapper, read_game_file(game_file_path))
