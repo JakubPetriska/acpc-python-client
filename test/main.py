@@ -13,7 +13,7 @@ from test.wrappers_tests import (
     MatchStateWrapperTest,
     StateWrapperTest
 )
-from test.utils import UtilsTest
+from test.game_utils_test import GameUtilsTest
 
 test_classes = [
     ActionWrapperTest,
@@ -24,7 +24,7 @@ test_classes = [
     GameTest,
     StateTest,
     MatchStateTest,
-    UtilsTest
+    GameUtilsTest
 ]
 
 

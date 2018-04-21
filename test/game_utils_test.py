@@ -2,7 +2,7 @@ import unittest
 from acpc_python_client import read_game_file
 
 
-class UtilsTest(unittest.TestCase):
+class GameUtilsTest(unittest.TestCase):
     def test_read_game_file(self):
         game = read_game_file('test.game')
         self.assertEqual(game.get_num_players(), 3)
