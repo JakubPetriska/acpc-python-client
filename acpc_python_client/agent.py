@@ -9,12 +9,6 @@ from acpc_python_client.data.game import Game
 from acpc_python_client.data.match_state import MatchState
 
 
-def read_game_file(path):
-    lib.player.readGameFile.restype = wrappers.GameWrapper
-    game_wrapper = lib.player.readGameFile(bytes(path, 'utf-8'))
-    return Game(game_wrapper)
-
-
 class Agent(object):
     """Base class for the agent.
 

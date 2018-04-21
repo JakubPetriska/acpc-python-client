@@ -1,3 +1,8 @@
+import acpc_python_client.agent_lib as lib
+import acpc_python_client.wrappers as wrappers
+from acpc_python_client.data.game import Game
+
+
 _MAX_SUITS = 4
 _MAX_RANKS = 13
 
@@ -34,3 +39,9 @@ def generate_deck(game):
         for rank in range(_MAX_RANKS - game.get_num_ranks(), _MAX_RANKS):
             deck.append(rank * _MAX_SUITS + suit)
     return deck
+
+
+def read_game_file(path):
+    lib.player.readGameFile.restype = wrappers.GameWrapper
+    game_wrapper = lib.player.readGameFile(bytes(path, 'utf-8'))
+    return Game(game_wrapper)
