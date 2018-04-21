@@ -7,7 +7,7 @@ class MatchState(BaseDataObject):
 
     def __init__(self, wrapper, game):
         super().__init__(wrapper)
-        self._state = State(self._data_holder.state, self, game)
+        self._state = State(self._data_holder.state, game)
 
     def get_state(self):
         """State of the game.

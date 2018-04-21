@@ -5,9 +5,8 @@ from acpc_python_client.utils import action_type_int_to_enum
 class State(BaseDataObject):
     """State of the game."""
 
-    def __init__(self, wrapper, match_state, game):
+    def __init__(self, wrapper, game):
         super().__init__(wrapper)
-        self._match_state = match_state
         self._game = game
 
     def get_max_spent(self):
@@ -198,14 +197,15 @@ class State(BaseDataObject):
                 % (card_index, self._game.get_num_board_cards(self.get_round()), self.get_round()))
         return self._data_holder.boardCards[card_index]
 
-    def get_hole_card(self, card_index):
+    def get_hole_card(self, player_index, card_index):
         """Returns player's hole card
 
         Args:
+            player_index (int): Index of the player.
             card_index (int): Index of the hole card.
 
         Returns:
-            Hole card on given index.
+            Hole card of given player on given index.
 
         Raises:
             ValueError: When card_index is greater or equal
@@ -215,4 +215,4 @@ class State(BaseDataObject):
             raise ValueError(
                 'Cannot retrieve hole card %s, there are only %s hole cards'
                 % (card_index, self._game.get_num_hole_cards()))
-        return self._data_holder.holeCards[self._match_state.get_viewing_player()][card_index]
+        return self._data_holder.holeCards[player_index][card_index]

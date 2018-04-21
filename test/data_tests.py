@@ -152,10 +152,10 @@ class StateTest(unittest.TestCase):
                 self.state.get_board_card(i)
 
         for i in range(NUM_HOLE_CARDS):
-            self.assertEqual(self.state.get_hole_card(i), 2 + 1 * MAX_PLAYERS + i)
+            self.assertEqual(self.state.get_hole_card(1, i), 2 + 1 * MAX_PLAYERS + i)
         for i in range(NUM_HOLE_CARDS, MAX_HOLE_CARDS):
             with self.assertRaises(ValueError):
-                self.state.get_hole_card(i)
+                self.state.get_hole_card(1, i)
 
 
 class MatchStateTest(unittest.TestCase):
