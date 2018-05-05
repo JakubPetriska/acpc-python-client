@@ -138,6 +138,7 @@ class StateTest(unittest.TestCase):
                 self.state.get_num_actions(i)
 
         self.assertEqual(self.state.get_round(), 1)
+        self.assertEqual(self.state.is_finished(), True)
 
         for i in range(NUM_PLAYERS):
             self.assertEqual(self.state.get_player_folded(i), True)

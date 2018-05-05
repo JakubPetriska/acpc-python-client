@@ -186,4 +186,4 @@ class Client(object):
             raise RuntimeError('No action was set by agent when it was acting')
 
     def _on_game_finished(self):
-        self._agent.on_game_finished(self._game, None)
+        self._agent.on_game_finished(self._game, self._match_state)

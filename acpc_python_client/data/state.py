@@ -158,6 +158,14 @@ class State(BaseDataObject):
         """
         return self._data_holder.round
 
+    def is_finished(self):
+        """Returns whether the game is finished.
+
+        Returns:
+            bool: True if the game is finished, false otherwise.
+        """
+        return self._data_holder.finished != 0
+
     def get_player_folded(self, player_index):
         """Returns whether given player has folded.
 
